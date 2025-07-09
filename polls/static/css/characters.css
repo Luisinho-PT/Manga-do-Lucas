@@ -1,7 +1,7 @@
 body {
     background-color: #1a1a1a;
     color: #f0f0f0;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 2rem;
     margin: 0;
 }
@@ -24,14 +24,6 @@ body {
     text-align: center;
 }
 
-.character-card img {
-    width: 100%;
-    max-width: 180px;
-    border-radius: 10px;
-    border: 2px solid #444;
-    transition: 0.3s ease;
-}
-
 .character-card p {
     margin-top: 0.8rem;
     font-weight: bold;
@@ -39,10 +31,9 @@ body {
     color: #fff;
 }
 
-.character-card a img {
-    width: 100%;
-    max-width: 180px;
-    height: auto;
+.character-card img {
+    width: 200px;
+    height: 200px;
     object-fit: cover;
     border-radius: 10px;
     border: 2px solid #444;
@@ -51,8 +42,29 @@ body {
 }
 
 /* Quando passar o mouse */
-.character-card a img:hover {
+.character-card img:hover {
     filter: brightness(0.85); /* escurece um pouco */
     cursor: pointer;
     box-shadow: 0 0 15px #ffd70044; /* sombra leve dourada */
+}
+
+.return {
+    display: block;
+    margin: auto auto 0; /* margem superior 20px, esquerda/direita auto para centralizar */
+    height: 30px;
+    width: 220px;
+    line-height: 30px;
+    text-decoration: none;
+    color: #ffd700;
+    font-weight: bold;
+    padding: 10px 20px;
+    background-color: #444;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+
+.return:hover {
+    background-color: #ffd700;
+    color: #1a1a1a;
 }
