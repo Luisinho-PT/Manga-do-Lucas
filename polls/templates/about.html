@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+    <link rel="icon" href="{% static 'img/aba_pagina.png' %}" type="image/png">
+    <title>Sobre esse Site</title>
+</head>
+<body>
+    <h1>Sobre o Site</h1>
+    <div class="about">
+        <p>Este site está sendo  feito em homenagem ao meu grandiossimo amigo chamado Lucas, sem ele, esse site não iria existir, todos os créditos vai para ele por ter criado essa historia maravilhosa</p>
+        <p>Criado pelo Luis, o código será de fonte aberta e deixarei disponível no Github, que você poderá clicar em seguida</p>
+        <a class="clicable-to-git" href="https://github.com/Luisinho-PT/Manga-do-Lucas">Github</a>
+        <p>O site é um projeto de estudo, e não tem fins lucrativos, apenas para diversão.</p>
+        <p>Qualquer dúvida, entre em contato comigo pelos locais abaixo: 
+            <ul>
+                <li><p>Email: luismiguelsousa48@gmail.com</p>
+                <li><p>Discord: luismig_uel </p>
+            </ul>
+        </p>
+        <p>Obrigado por visitar o site, espero que tenha gostado!</p>
+    </div>
+    <a class="back-to-home" href="{% url 'main_page' %}">Voltar para a Página Inicial</a>
+</body>
+</html>

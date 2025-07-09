@@ -20,7 +20,10 @@ def about(request):
 
 
 def lucas(request):
-    return render(request, 'lucas.html')
+    return render(request, 'personagens/lucas.html')
 
 def luis(request):
-    return render(request, 'luis.html')
+    return render(request, 'personagens/luis.html')
+
+def licas(request):
+    return render(request, 'personagens/licas.html')
