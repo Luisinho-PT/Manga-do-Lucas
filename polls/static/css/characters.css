@@ -1,0 +1,58 @@
+body {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 2rem;
+    margin: 0;
+}
+
+.title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #ffd700;
+}
+
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.character-card {
+    text-align: center;
+}
+
+.character-card img {
+    width: 100%;
+    max-width: 180px;
+    border-radius: 10px;
+    border: 2px solid #444;
+    transition: 0.3s ease;
+}
+
+.character-card p {
+    margin-top: 0.8rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.character-card a img {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #444;
+    transition: 0.3s ease;
+    box-shadow: 0 0 10px transparent;  /* sombra invisível no início */
+}
+
+/* Quando passar o mouse */
+.character-card a img:hover {
+    filter: brightness(0.85); /* escurece um pouco */
+    cursor: pointer;
+    box-shadow: 0 0 15px #ffd70044; /* sombra leve dourada */
+}

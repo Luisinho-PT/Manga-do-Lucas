@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'img/aba_pagina.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/characters.css' %}">
+    <title>Personagens</title>
+</head>
+<body>
+    <h1 class="title">Personagens</h1>
+    
+    <div class="character-grid">
+        <!-- Personagem 1 -->
+        <div class="character-card">
+            <a href="{% url 'lucas' %}">
+                <img src="{% static 'img/lucas/lucas.png' %}" alt="LUUUUUUUUUUUUUUUUUUCAAAAAAAAAAAAAAASSSSSSSSSS">
+            </a>
+            <p>Lucas</p>
+        </div>
+
+        <!-- Personagem 2 -->
+        <div class="character-card">
+            <a href=" {% url 'luis' %}">
+                <img src="{% static 'img/luis/luis.png' %}" alt="LUUUUUUUUUUUUUUUUUUIIIIIIIIIIIIIIIIIIIIIIIISSSSSSSSSSSSSSS">
+            </a>
+            <p>Luis</p>
+        </div>
+        <!-- Personagem 3 -->
+        <div class="character-card">
+            <a href=" {% url 'luis' %}">
+                <img src="{% static 'img/luis.png' %}" alt="LUUUUUUUUUUUUUUUUUUIIIIIIIIIIIIIIIIIIIIIIIISSSSSSSSSSSSSSS">
+            </a>
+            <p>Luis</p>
+        </div>
+        <!-- Adicione mais personagens abaixo seguindo o mesmo padrão -->
+    </div>
+</body>
+</html>
