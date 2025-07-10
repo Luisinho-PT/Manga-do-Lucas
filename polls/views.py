@@ -27,3 +27,6 @@ def luis(request):
 
 def licas(request):
     return render(request, 'personagens/licas.html')
+
+def guido(request):
+    return render(request, 'personagens/guido.html')
