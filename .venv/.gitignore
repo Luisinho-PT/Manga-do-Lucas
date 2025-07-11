@@ -1,0 +1,44 @@
+
+
+# Ambiente virtual (não subir pro GitHub)
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de banco locais
+db.sqlite3
+
+# Configs e arquivos sensíveis
+.env
+*.env
+
+# Arquivos temporários / logs
+*.log
+*.pot
+*.pyc
+*.pyo
+
+# Arquivos de sistema/macOS
+.DS_Store
+Thumbs.db
+
+# VSCode settings (opcional)
+.vscode/
+
+# Arquivos de deploy ou scripts (se quiser)
+setup.ps1
+setup.sh
+
+# Arquivos gerados pelo Django
+/staticfiles/
+/media/
+
+# Node modules (caso use algum frontend JS)
+node_modules/
+
+# Arquivos do sistema Windows
+desktop.ini

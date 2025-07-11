@@ -19,7 +19,6 @@ from django.urls import path
 from polls.views import *  # Import the main page view from the polls app
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', main_page, name='main_page'),  # Main page URL
     path('history/', history , name='history'),  # History page URL
     path('characters/', characters, name='characters'),  # Characters page URL

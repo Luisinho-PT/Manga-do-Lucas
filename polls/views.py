@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from .models import Comment
+from .forms import CommentForm
 
 
 # Create your views here.
@@ -16,8 +19,26 @@ def chapters(request):
     return render(request, 'chapters.html')
 
 def about(request):
-    return render(request, 'about.html')
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('about')
+    else:
+        form = CommentForm()
 
+    fixado = Comment.objects.filter(fixado=True).first()  # Apenas um fixado
+    outros_comentarios = Comment.objects.exclude(id=fixado.id if fixado else None).order_by('-criado_em')
+
+    paginator = Paginator(outros_comentarios, 4)
+    page_number = request.GET.get('page')
+    comments_page = paginator.get_page(page_number)
+
+    return render(request, 'about.html', {
+        'form': form,
+        'fixado': fixado,
+        'comments': comments_page
+    })
 
 def lucas(request):
     return render(request, 'personagens/lucas.html')

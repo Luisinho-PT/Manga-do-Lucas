@@ -11,18 +11,64 @@
 <body>
     <h1>Sobre o Site</h1>
     <div class="about">
-        <p>Este site está sendo  feito em homenagem ao meu grandiossimo amigo chamado Lucas, sem ele, esse site não iria existir, todos os créditos vai para ele por ter criado essa historia maravilhosa</p>
+        <p>Este site está sendo feito em homenagem ao meu grandiossimo amigo chamado Lucas, sem ele, esse site não iria existir, todos os créditos vão para ele por ter criado essa historia maravilhosa</p>
         <p>Criado pelo Luis, o código será de fonte aberta e deixarei disponível no Github, que você poderá clicar em seguida</p>
         <a class="clicable-to-git" href="https://github.com/Luisinho-PT/Manga-do-Lucas">Github</a>
         <p>O site é um projeto de estudo, e não tem fins lucrativos, apenas para diversão.</p>
         <p>Qualquer dúvida, entre em contato comigo pelos locais abaixo: 
             <ul>
                 <li><p>Email: luismiguelsousa48@gmail.com</p>
-                <li><p>Discord: luismig_uel </p>
+                <li><p>Discord: luismig_uel</p>
             </ul>
         </p>
         <p>Obrigado por visitar o site, espero que tenha gostado!</p>
     </div>
+
+    <!-- Formulário de novo comentário -->
+    <div class="comment-form">
+        <h2>Deixe seu comentário</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-button">Enviar</button>
+        </form>
+    </div>
+
+
+    <!-- Comentário fixado -->
+    {% if fixado %}
+        <div class="comment-box fixed">
+            <span>★ Comentário em destaque</span><br>
+            <strong>{{ fixado.nome }}</strong><br>
+            <small>{{ fixado.criado_em|date:"d/m/Y H:i" }}</small>
+            <p>{{ fixado.mensagem }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Comentários normais -->
+    {% for comment in comments %}
+        <div class="comment-box">
+            <strong>{{ comment.nome }}</strong><br>
+            <small>{{ comment.criado_em|date:"d/m/Y H:i" }}</small>
+            <p>{{ comment.mensagem }}</p>
+        </div>
+    {% empty %}
+        <p style="text-align: center;">Nenhum comentário ainda.</p>
+    {% endfor %}
+
+    <!-- Paginação -->
+    <div class="pagination">
+        {% if comments.has_previous %}
+            <a href="?page={{ comments.previous_page_number }}" class="clicable-to-git">Anterior</a>
+        {% endif %}
+
+        <span class="pagination-info">Página {{ comments.number }} de {{ comments.paginator.num_pages }}</span>
+
+        {% if comments.has_next %}
+            <a href="?page={{ comments.next_page_number }}" class="clicable-to-git">Próxima</a>
+        {% endif %}
+    </div>
+
     <a class="back-to-home" href="{% url 'main_page' %}">Voltar para a Página Inicial</a>
 </body>
 </html>
