@@ -1,5 +1,7 @@
+import os
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
+from datetime import datetime
 from .models import Comment
 from .forms import CommentForm
 
@@ -7,7 +9,12 @@ from .forms import CommentForm
 # Create your views here.
 
 def main_page(request):
-    return render(request, 'main_page.html')
+    commit_hash = os.environ.get("RENDER_GIT_COMMIT", "")[:7]
+    deploy_date = datetime.now().strftime('%d/%m/%Y')
+
+    commit_info = f"{commit_hash} – Deploy: {deploy_date}" if commit_hash else "versão desconhecida"
+
+    return render(request, 'main_page.html', {"commit_info": commit_info})
 
 def history(request):
     return render(request, 'history.html')

@@ -1,3 +1,4 @@
+/* Título */
 h1 {
     text-align: center;
     font-size: 2.5em;
@@ -5,10 +6,60 @@ h1 {
     margin-top: 20px;
 }
 
+/* Container do vídeo */
+.video-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Vídeo responsivo com sombras e borda arredondada */
+/* Regra base para todos os vídeos */
 .video-farmando-aura {
     display: block;
-    width: 80%;           /* ou 100% para tela cheia */
-    margin: 20px auto;    /* centraliza abaixo do <h1> */
+    width: 80%;                     /* ajustável */
+    height: auto;                   /* altura proporcional */
+    max-height: 600px;              /* altura padrão */
+    margin: 20px auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
+    object-fit: contain;            /* mantém qualidade e proporção */
+}
+
+/* Regra específica para vídeos com altura menor */
+.video-farmando-aura.small-height {
+    max-height: 600px;              /* altura reduzida */
+}
+
+/* Botões de seta */
+.arrow-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover nas setas */
+.arrow-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Seta esquerda */
+.arrow-button.left {
+    left: 10px;
+}
+
+/* Seta direita */
+.arrow-button.right {
+    right: 10px;
 }

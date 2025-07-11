@@ -1,19 +1,27 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'img/aba_pagina.png' %}" type="image/png">
     <link rel="stylesheet" href="{% static 'css/guido.css' %}">
-    <title>Document</title>
+    <title>Ele acha que é o Protagonista</title>
 </head>
 <body>
     <h1>Ele acha que é o Protagonista</h1>
-    <video class="video-farmando-aura" autoplay loop>
-        <source src="{% static 'img/guido/guido_video.mp4' %}" type="video/mp4">
-        Seu navegador não suporta o elemento de vídeo.
-    </video>
 
+    <div class="video-container">
+        <button class="arrow-button left" onclick="changeVideo(-1)">&#8592;</button>
+        
+        <video id="mainVideo" class="video-farmando-aura" autoplay loop>
+            <source src="{% static 'img/guido/guido_video.mp4' %}" type="video/mp4">
+            Seu navegador não suporta o elemento de vídeo.
+        </video>
+
+        <button class="arrow-button right" onclick="changeVideo(1)">&#8594;</button>
+    </div>
+
+    <script src="{% static 'js/guido.js' %}"></script>
 </body>
 </html>

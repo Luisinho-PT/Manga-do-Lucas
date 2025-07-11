@@ -19,6 +19,11 @@
             <a href="{% url 'chapters' %}"><dl>Capítulos</dl></a>
             <a href="{% url 'about' %}"><dl>Sobre</dl></a>
         </footer>
+
+        <div style="text-align: center; padding-bottom: 1rem; font-size: 0.9rem; color: #888;">
+    Versão: {{ commit_info }}
+</div>
+
     </div>
 </body>
 </html>
