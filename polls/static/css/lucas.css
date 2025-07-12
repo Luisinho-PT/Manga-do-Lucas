@@ -37,7 +37,7 @@ h1 {
 /* Legenda em cima do vídeo */
 .video-caption {
     position: absolute;
-    top: -2.5rem; /* Fica acima do vídeo */
+    top: -2.5rem;
     width: 100%;
     text-align: center;
     color: #ffd700;
@@ -46,8 +46,8 @@ h1 {
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
 }
 
-/* Vídeo com borda arredondada e sombra dourada */
-video.video-farmando-aura {
+/* Vídeo e imagem com mesmo estilo */
+.video-farmando-aura {
     width: 100%;
     max-width: 700px;
     border-radius: 10px;
@@ -68,23 +68,66 @@ video.video-farmando-aura {
 .arrow-button:hover {
     color: #fff;
 }
+/* Container dos botões aleatórios */
+.random-button-container {
+    position: relative;
+    width: 100%;
+    height: 150px; /* diminui a altura para subir os botões */
+    margin-top: 2rem;
+}
 
-/* Ajuste das setas no mobile */
+.random-button-container button {
+    position: absolute;
+    width: 20px; /* botões menores */
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    font-size: 0.9rem; /* fonte menor */
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+    transition: transform 0.2s ease;
+}
+
+.random-button-container button:hover {
+    transform: scale(1.3);
+    background-color: #555;
+}
+
+/* Imagem de popup final */
+.popup-image {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;   /* força a largura */
+    height: 600px;  /* força a altura */
+    z-index: 9999;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    opacity: 1;
+    transition: opacity 1.2s ease;
+}
+
+
+/* Fade-out da imagem */
+.popup-image.fade-out {
+    opacity: 0;
+}
+
+/* Mobile */
 @media (max-width: 700px) {
     .video-container {
         flex-direction: column;
         gap: 1.5rem;
-        position: relative;
     }
 
     .arrow-button {
         font-size: 2.5rem;
     }
 
-    /* Posicionar legenda acima do vídeo no mobile */
     .video-caption {
         position: static;
         margin-bottom: 0.5rem;
     }
 }
-

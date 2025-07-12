@@ -15,14 +15,16 @@
         <!-- Legenda dinâmica -->
         <h2 id="videoCaption" class="video-caption">PLIM PLIM PLON</h2>
 
-        <button class="arrow-button left" onclick="changeVideo(-1)">&#8592;</button>
-
+        <button class="arrow-button left" onclick="changeMedia(-1)">&#8592;</button>
         <video id="mainVideo" class="video-farmando-aura" autoplay loop>
-            <source id="videoSource" src="{% static 'img/licas/licas_video1.mp4' %}" type="video/mp4" />
-            Seu navegador não suporta o elemento de vídeo.
+        <source id="videoSource" src="{% static 'img/licas/licas_video.mp4' %}" type="video/mp4" />
+        Seu navegador não suporta o elemento de vídeo.
         </video>
 
-        <button class="arrow-button right" onclick="changeVideo(1)">&#8594;</button>
+        <img id="mainImage" class="video-farmando-aura" src="" alt="Imagem Licas" style="display: none;" />
+
+
+        <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
     </div>
 
     <script src="{% static 'js/licas.js' %}"></script>

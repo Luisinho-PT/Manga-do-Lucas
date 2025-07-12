@@ -12,18 +12,29 @@
     <h1>LUUUUUUUUUUUUUUUUUUUUCAAAAAAAAAAAAAAAAAAAAASSSSSSSSSSSSSSSSSSSSSSSSS</h1>
 
     <div class="video-container">
-        <!-- Frase que vai mudar -->
         <h2 id="videoCaption" class="video-caption">Arco de treinamento do Lucas</h2>
 
-        <button class="arrow-button left" onclick="changeVideo(-1)">&#8592;</button>
+        <button class="arrow-button left" onclick="changeMedia(-1)">&#8592;</button>
 
         <video id="mainVideo" class="video-farmando-aura" autoplay loop>
             <source id="videoSource" src="{% static 'img/lucas/lucas_video.mp4' %}" type="video/mp4" />
             Seu navegador não suporta o elemento de vídeo.
         </video>
 
-        <button class="arrow-button right" onclick="changeVideo(1)">&#8594;</button>
+        <img id="mainImage" class="video-farmando-aura" src="" alt="Imagem" style="display: none;" />
+
+        <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
     </div>
+
+    <!-- Container para botões aleatórios -->
+    <div class="random-button-container">
+        <button id="btn1" onclick="registerClick('btn1')">🔵</button>
+        <button id="btn2" onclick="registerClick('btn2')">🟢</button>
+        <button id="btn3" onclick="registerClick('btn3')">🔴</button>
+    </div>
+
+    <!-- Imagem surpresa após os 3 cliques -->
+    <img id="finalPopupImage" class="popup-image" src="{% static 'img/lucas/lucas_careca.png' %}" alt="Surpresa!" style="display: none;" />
 
     <script src="{% static 'js/lucas.js' %}"></script>
 </body>

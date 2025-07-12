@@ -64,6 +64,14 @@ video.video-farmando-aura {
     color: #ffffff;
 }
 
+img.video-farmando-aura {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+}
+
+
 @media (max-width: 700px) {
     .video-container {
         flex-direction: column;

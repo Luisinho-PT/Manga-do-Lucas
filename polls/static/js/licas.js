@@ -1,18 +1,24 @@
-// Lista de vídeos e legendas para Licas
 const videos = [
     {
         src: '/static/img/licas/licas_video.mp4',
-        caption: 'PLIM PLIM PLON'
+        caption: 'PLIM PLIM PLON',
+        type: 'video'
     },
     {
         src: '/static/img/licas/licas_video2.mp4',
-        caption: 'Ele é o mais honrado'
+        caption: 'Ele é o mais honrado',
+        type: 'video'
+    },
+    {
+        src: '/static/img/licas/prova.png',
+        caption: 'Que prova?',
+        type: 'image'
     }
 ];
 
 let currentIndex = 0;
 
-function changeVideo(direction) {
+function changeMedia(direction) {
     currentIndex += direction;
 
     if (currentIndex < 0) {
@@ -21,17 +27,30 @@ function changeVideo(direction) {
         currentIndex = 0;
     }
 
-    const videoElement = document.getElementById('mainVideo');
-    const sourceElement = document.getElementById('videoSource');
+    const media = videos[currentIndex];
     const captionElement = document.getElementById('videoCaption');
+    const videoElement = document.getElementById('mainVideo');
+    const imageElement = document.getElementById('mainImage');
 
-    sourceElement.src = videos[currentIndex].src;
-    captionElement.textContent = videos[currentIndex].caption;
+    captionElement.textContent = media.caption;
 
-    videoElement.load();
-    videoElement.play();
+    if (media.type === 'video') {
+        imageElement.style.display = 'none';
+
+        videoElement.style.display = 'block';
+        videoElement.querySelector('source').src = media.src;
+        videoElement.load();
+        videoElement.play();
+    } else if (media.type === 'image') {
+        // Parar o vídeo anterior e esconder
+        videoElement.pause();
+        videoElement.style.display = 'none';
+
+        imageElement.src = media.src;
+        imageElement.style.display = 'block';
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    changeVideo(0);
+    changeMedia(0);
 });
