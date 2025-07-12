@@ -10,6 +10,7 @@ from datetime import datetime
 
 # Create your views here.
 
+
 def get_commit_message(commit_hash):
     cache_key = f"commit_message_{commit_hash}"
     message = cache.get(cache_key)
@@ -17,25 +18,37 @@ def get_commit_message(commit_hash):
         return message
 
     url = f"https://api.github.com/repos/Luisinho-PT/Manga-do-Lucas/commits/{commit_hash}"
-    response = requests.get(url)
+
+    # ✅ Usa o token se existir no ambiente
+    token = os.environ.get("GITHUB_TOKEN")
+    headers = {}
+    if token:
+        headers['Authorization'] = f'token {token}'
+
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
         message = data['commit']['message']
         cache.set(cache_key, message, timeout=3600)  # cache por 1 hora
         return message
+
+    # ✅ Log opcional para debug
+    print(f"Erro ao buscar commit: {response.status_code} - {response.text}")
     return "Mensagem do commit indisponível."
 
 def main_page(request):
-    commit_hash = os.environ.get("RENDER_GIT_COMMIT", "")[:7]
+    full_commit_hash = os.environ.get("RENDER_GIT_COMMIT", "")  # hash completo
     deploy_date = datetime.now().strftime('%d/%m/%Y')
 
-    if commit_hash:
-        commit_message = get_commit_message(commit_hash)
-        commit_info = f"{commit_hash} – {commit_message} – Deploy: {deploy_date}"
+    if full_commit_hash:
+        commit_message = get_commit_message(full_commit_hash)
+        short_hash = full_commit_hash[:7]
+        commit_info = f"{short_hash} – {commit_message} – Deploy: {deploy_date}"
     else:
         commit_info = "Versão desconhecida"
 
     return render(request, 'main_page.html', {"commit_info": commit_info})
+
 
 def history(request):
     return render(request, 'history.html')

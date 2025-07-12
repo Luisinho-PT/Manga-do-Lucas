@@ -14,7 +14,10 @@ from pathlib import Path
 from decouple import config
 import os
 import dj_database_url
+import environ
 
+env = environ.Env()
+environ.Env.read_env()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,6 +35,10 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['127.0.0.1','.onrender.com']
 
+# GITHUB_TOKEN: # Token para acessar a API do GitHub
+# Certifique-se de que o token tenha permissões para acessar o repositório
+# Você pode definir isso no arquivo .env ou diretamente aqui, mas é recomendado usar variáveis de ambiente
+GITHUB_TOKEN = env('GITHUB_TOKEN', default='')
 
 # Application definition
 
