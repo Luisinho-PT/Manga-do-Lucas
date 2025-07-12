@@ -1,0 +1,82 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0f0f0f;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+h1 {
+    color: #00ffcc;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.video-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+}
+
+.video-caption {
+    position: absolute;
+    top: -2.5rem;
+    width: 100%;
+    text-align: center;
+    color: #00ffcc;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.8);
+}
+
+video.video-farmando-aura {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+}
+
+.arrow-button {
+    background-color: transparent;
+    border: none;
+    font-size: 3rem;
+    color: #00ffcc;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.arrow-button:hover {
+    color: #ffffff;
+}
+
+@media (max-width: 700px) {
+    .video-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+    }
+
+    .arrow-button {
+        font-size: 2.5rem;
+    }
+
+    .video-caption {
+        position: static;
+        margin-bottom: 0.5rem;
+    }
+}

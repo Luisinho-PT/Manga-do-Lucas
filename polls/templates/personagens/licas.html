@@ -1,11 +1,30 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="{% static 'img/aba_pagina.png' %}" type="image/png" />
+    <link rel="stylesheet" href="{% static 'css/licas.css' %}" />
+    <title>Licas</title>
 </head>
 <body>
-    <p>NIIIIIIIIIIIIIIGGGGGGGGGGGGGGGGGGGGGASSSSSSSSSSSSSSSSSSSS</p>
+    <h1>LICAAAAAAAAAAAAAAAAAAAAAASSSSSSSSSSSSS</h1>
+
+    <div class="video-container">
+        <!-- Legenda dinâmica -->
+        <h2 id="videoCaption" class="video-caption">PLIM PLIM PLON</h2>
+
+        <button class="arrow-button left" onclick="changeVideo(-1)">&#8592;</button>
+
+        <video id="mainVideo" class="video-farmando-aura" autoplay loop>
+            <source id="videoSource" src="{% static 'img/licas/licas_video1.mp4' %}" type="video/mp4" />
+            Seu navegador não suporta o elemento de vídeo.
+        </video>
+
+        <button class="arrow-button right" onclick="changeVideo(1)">&#8594;</button>
+    </div>
+
+    <script src="{% static 'js/licas.js' %}"></script>
 </body>
 </html>
