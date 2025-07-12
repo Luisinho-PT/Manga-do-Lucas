@@ -1,0 +1,90 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: #e6e6e6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Título da página */
+h1 {
+    color: #ffd700;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Container do vídeo e controles */
+.video-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+}
+
+/* Legenda em cima do vídeo */
+.video-caption {
+    position: absolute;
+    top: -2.5rem; /* Fica acima do vídeo */
+    width: 100%;
+    text-align: center;
+    color: #ffd700;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+}
+
+/* Vídeo com borda arredondada e sombra dourada */
+video.video-farmando-aura {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+/* Botões de seta */
+.arrow-button {
+    background-color: transparent;
+    border: none;
+    font-size: 3rem;
+    color: #ffd700;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.arrow-button:hover {
+    color: #fff;
+}
+
+/* Ajuste das setas no mobile */
+@media (max-width: 700px) {
+    .video-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+    }
+
+    .arrow-button {
+        font-size: 2.5rem;
+    }
+
+    /* Posicionar legenda acima do vídeo no mobile */
+    .video-caption {
+        position: static;
+        margin-bottom: 0.5rem;
+    }
+}
+
