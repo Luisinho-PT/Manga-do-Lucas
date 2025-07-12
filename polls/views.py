@@ -2,6 +2,10 @@ import os
 import requests
 from django.shortcuts import render
 from django.core.cache import cache
+from django.core.paginator import Paginator
+from django.shortcuts import redirect
+from .forms import CommentForm
+from .models import Comment
 from datetime import datetime
 
 # Create your views here.
