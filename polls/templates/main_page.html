@@ -20,9 +20,30 @@
             <a href="{% url 'about' %}"><dl>Sobre</dl></a>
         </footer>
 
-        <div style="text-align: center; padding-bottom: 1rem; font-size: 0.9rem; color: #888;">
-    Versão: {{ commit_info }}
-</div>
+    <div style="text-align: center; padding-bottom: 1rem; font-size: 0.9rem; color: #888;">
+        Versão: {{ commit_info }}
+    </div>
+
+    <div class="changelog-box-container">
+        <div class="changelog-box">
+            <h2>Changelog</h2>
+            {% if changelog %}
+            <ul>
+            {% for entry in changelog %}
+                <li>
+                <strong>{{ entry.date }}</strong> — 
+                <code>{{ entry.hash }}</code> — 
+                {{ entry.message }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% else %}
+            <p>Nenhum commit recente encontrado.</p>
+            {% endif %}
+        </div>
+    </div>
+
+
 
     </div>
 </body>

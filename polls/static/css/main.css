@@ -48,6 +48,50 @@ footer dl {
     font-size: 1.1rem;
 }
 
+/* Centraliza o changelog usando flexbox */
+.changelog-box-container {
+  display: flex;
+  justify-content: center; /* centraliza horizontalmente */
+  align-items: center;     /* centraliza verticalmente */
+  margin: 2rem 0;          /* espaço acima e abaixo */
+}
+
+/* Estilo para changelog */
+.changelog-box {
+  max-width: 600px;
+  color: #aaa;
+  font-size: 0.85rem;
+  text-align: left;
+  background-color: #222;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.changelog-box h2 {
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+}
+
+.changelog-box ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.changelog-box li {
+  border-bottom: 1px solid #444;
+  padding: 0.4rem 0;
+  font-family: monospace, monospace;
+}
+
+.changelog-box code {
+  background: #333;
+  padding: 0 0.2rem;
+  border-radius: 3px;
+  color: #ffd700;
+}
+
+
 /* Responsivo */
 @media (max-width: 600px) {
     footer {
@@ -55,3 +99,4 @@ footer dl {
         align-items: center;
     }
 }
+
