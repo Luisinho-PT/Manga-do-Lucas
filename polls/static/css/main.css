@@ -91,6 +91,12 @@ footer dl {
   color: #ffd700;
 }
 
+.commit-info {
+    text-align: center;
+    padding-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+}
 
 /* Responsivo */
 @media (max-width: 600px) {

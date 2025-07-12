@@ -14,3 +14,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.nome} - {self.mensagem[:30]}'
+    
+class Changelog(models.Model):
+    commit_hash = models.CharField(max_length=40, unique=True)
+    message = models.TextField()
+    date = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.commit_hash[:7]} - {self.message[:50]}"

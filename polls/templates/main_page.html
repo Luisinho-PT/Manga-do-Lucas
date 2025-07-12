@@ -12,39 +12,32 @@
     <div>
         <h1>Bem-vindo ao Mangá do Luquinhas!</h1>
     </div>
-    <div>
-        <footer>
-            <a href="{% url 'history' %}"><dl>História</dl></a>
-            <a href="{% url 'characters' %}"><dl>Personagens</dl></a>
-            <a href="{% url 'chapters' %}"><dl>Capítulos</dl></a>
-            <a href="{% url 'about' %}"><dl>Sobre</dl></a>
-        </footer>
+        <div>
+            <footer>
+                <a href="{% url 'history' %}"><dl>História</dl></a>
+                <a href="{% url 'characters' %}"><dl>Personagens</dl></a>
+                <a href="{% url 'chapters' %}"><dl>Capítulos</dl></a>
+                <a href="{% url 'about' %}"><dl>Sobre</dl></a>
+            </footer>
 
-    <div style="text-align: center; padding-bottom: 1rem; font-size: 0.9rem; color: #888;">
-        Versão: {{ commit_info }}
-    </div>
-
-    <div class="changelog-box-container">
-        <div class="changelog-box">
-            <h2>Changelog</h2>
-            {% if changelog %}
-            <ul>
-            {% for entry in changelog %}
-                <li>
-                <strong>{{ entry.date }}</strong> — 
-                <code>{{ entry.hash }}</code> — 
-                {{ entry.message }}
-                </li>
-            {% endfor %}
-            </ul>
-            {% else %}
-            <p>Nenhum commit recente encontrado.</p>
-            {% endif %}
+        <div class="commit-info">
+            Versão: {{ commit_info }}
         </div>
-    </div>
 
-
-
+        <div class="changelog-box-container">
+            <div class="changelog-box">
+                <h2>Changelog</h2>
+                <ul>
+                    {% if changelog %}
+                    {% for commit in changelog %}
+                    <li>- {{ commit.message }}{% if commit.date %} – {{ commit.date }}{% endif %}</li>
+                    {% endfor %}
+                    {% else %}
+                    <li>Nenhum commit recente encontrado.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
 </html>
