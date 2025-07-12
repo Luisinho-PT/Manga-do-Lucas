@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import localtime
 
 class Comment(models.Model):
     nome = models.CharField(max_length=100)
@@ -19,6 +20,9 @@ class Changelog(models.Model):
     commit_hash = models.CharField(max_length=40, unique=True)
     message = models.TextField()
     date = models.DateTimeField()
+
+    def local_date(self):
+        return localtime(self.date)
 
     def __str__(self):
         return f"{self.commit_hash[:7]} - {self.message[:50]}"

@@ -1,4 +1,5 @@
 {% load static %}
+{% load tz %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,13 +29,13 @@
             <div class="changelog-box">
                 <h2>Changelog</h2>
                 <ul>
-                    {% if changelog %}
+                {% if changelog %}
                     {% for commit in changelog %}
-                    <li>- {{ commit.message }}{% if commit.date %} – {{ commit.date }}{% endif %}</li>
+                    <li>- {{ commit.message }} - {{ commit.date }}</li>
                     {% endfor %}
-                    {% else %}
+                {% else %}
                     <li>Nenhum commit recente encontrado.</li>
-                    {% endif %}
+                {% endif %}
                 </ul>
             </div>
         </div>

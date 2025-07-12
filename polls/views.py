@@ -5,9 +5,11 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from .forms import CommentForm
-from .models import Comment
+from .models import Comment, Changelog
 from datetime import datetime, timedelta, timezone
-from .models import Changelog
+from django.utils.timezone import make_aware
+import pytz
+
 
 def save_recent_commits_to_db(after_commit=None, limit=5):
     token = os.environ.get("GITHUB_TOKEN")
@@ -65,7 +67,6 @@ def get_commit_message(commit_hash):
     return "Mensagem do commit indisponível."
 
 
-
 def fetch_recent_commits(after_commit=None, limit=5):
     token = os.environ.get("GITHUB_TOKEN")
     headers = {"Authorization": f"token {token}"} if token else {}
@@ -102,17 +103,35 @@ def fetch_recent_commits(after_commit=None, limit=5):
 
     return commits
 
+
 def main_page(request):
+    br_tz = pytz.timezone('America/Sao_Paulo')  # Fuso horário de São Paulo (GMT-3)
     full_commit_hash = os.environ.get("RENDER_GIT_COMMIT", "")
-    deploy_date = datetime.now().strftime('%d/%m/%Y')
+    deploy_date = datetime.now(tz=br_tz).strftime('%d/%m/%Y')  # Data do deploy no horário local
 
     if full_commit_hash:
         commit_message = get_commit_message(full_commit_hash)
         short_hash = full_commit_hash[:7]
         commit_info = f"{short_hash} – {commit_message} – Deploy: {deploy_date}"
 
-        # Passe o hash completo para a função
-        changelog = fetch_recent_commits(after_commit=full_commit_hash, limit=5)
+        changelog_objs = Changelog.objects.order_by('-date')[:5]
+
+        changelog = []
+        for entry in changelog_objs:
+            # Verifica se a data é naive e torna aware assumindo UTC
+            if entry.date.tzinfo is None or entry.date.tzinfo.utcoffset(entry.date) is None:
+                aware_date = make_aware(entry.date, timezone=timezone.utc)
+            else:
+                aware_date = entry.date
+            
+            # Converte para o timezone de São Paulo
+            local_dt = aware_date.astimezone(br_tz)
+            formatted_date = local_dt.strftime("%d/%m/%Y %H:%M")
+
+            changelog.append({
+                "message": entry.message,
+                "date": formatted_date,
+            })
     else:
         commit_info = "Versão desconhecida"
         changelog = []
