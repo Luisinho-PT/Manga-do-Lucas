@@ -1,18 +1,35 @@
 import os
-from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
+import requests
+from django.shortcuts import render
+from django.core.cache import cache
 from datetime import datetime
-from .models import Comment
-from .forms import CommentForm
-
 
 # Create your views here.
+
+def get_commit_message(commit_hash):
+    cache_key = f"commit_message_{commit_hash}"
+    message = cache.get(cache_key)
+    if message:
+        return message
+
+    url = f"https://api.github.com/repos/Luisinho-PT/Manga-do-Lucas/commits/{commit_hash}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        message = data['commit']['message']
+        cache.set(cache_key, message, timeout=3600)  # cache por 1 hora
+        return message
+    return "Mensagem do commit indisponível."
 
 def main_page(request):
     commit_hash = os.environ.get("RENDER_GIT_COMMIT", "")[:7]
     deploy_date = datetime.now().strftime('%d/%m/%Y')
 
-    commit_info = f"{commit_hash} – Deploy: {deploy_date}" if commit_hash else "versão desconhecida"
+    if commit_hash:
+        commit_message = get_commit_message(commit_hash)
+        commit_info = f"{commit_hash} – {commit_message} – Deploy: {deploy_date}"
+    else:
+        commit_info = "Versão desconhecida"
 
     return render(request, 'main_page.html', {"commit_info": commit_info})
 

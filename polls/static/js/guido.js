@@ -6,7 +6,14 @@ const videos = [
     {
         src: "/static/img/guido/guido_video2.mp4",
         small: true   // este será reduzido
-    }
+    },
+    {   src: "/static/img/guido/guido_video3.mp4",
+        small: true   // este também será reduzido
+    },
+    {   
+        src: "/static/img/guido/guido_video4.mp4",
+        small: true   // este também será reduzido
+    },
 ];
 
 let currentVideoIndex = 0;
