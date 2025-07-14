@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from .forms import CommentForm
-from .models import Comment, Changelog
+from .models import Comment, Changelog, VersaoSistema
 from datetime import datetime, timedelta, timezone
 from django.utils.timezone import make_aware
 import pytz
@@ -105,42 +105,33 @@ def fetch_recent_commits(after_commit=None, limit=5):
 
 
 def main_page(request):
-    br_tz = pytz.timezone('America/Sao_Paulo')  # Fuso horário de São Paulo (GMT-3)
-    full_commit_hash = os.environ.get("RENDER_GIT_COMMIT", "")
-    deploy_date = datetime.now(tz=br_tz).strftime('%d/%m/%Y')  # Data do deploy no horário local
+    br_tz = pytz.timezone('America/Sao_Paulo')
+    deploy_date = datetime.now(tz=br_tz).strftime('%d/%m/%Y')
 
-    if full_commit_hash:
-        commit_message = get_commit_message(full_commit_hash)
-        short_hash = full_commit_hash[:7]
-        commit_info = f"{short_hash} – {commit_message} – Deploy: {deploy_date}"
+    versao = VersaoSistema.objects.order_by('-atualizado_em').first()
 
-        changelog_objs = Changelog.objects.order_by('-date')[:5]
-
-        changelog = []
-        for entry in changelog_objs:
-            # Verifica se a data é naive e torna aware assumindo UTC
-            if entry.date.tzinfo is None or entry.date.tzinfo.utcoffset(entry.date) is None:
-                aware_date = make_aware(entry.date, timezone=timezone.utc)
-            else:
-                aware_date = entry.date
-            
-            # Converte para o timezone de São Paulo
-            local_dt = aware_date.astimezone(br_tz)
-            formatted_date = local_dt.strftime("%d/%m/%Y %H:%M")
-
-            changelog.append({
-                "message": entry.message,
-                "date": formatted_date,
-            })
+    if versao:
+        commit_info = f"{versao.numero} – Deploy: {deploy_date}"
     else:
-        commit_info = "Versão desconhecida"
-        changelog = []
+        commit_info = f"Versão desconhecida – Deploy: {deploy_date}"
+
+    changelog_objs = Changelog.objects.filter(exibir=True).order_by('-date')[:5]
+
+    changelog = []
+    for entry in changelog_objs:
+        aware_date = make_aware(entry.date, timezone=timezone.utc) if entry.date.tzinfo is None else entry.date
+        local_dt = aware_date.astimezone(br_tz)
+        formatted_date = local_dt.strftime("%d/%m/%Y %H:%M")
+
+        changelog.append({
+            "message": entry.message,
+            "date": formatted_date,
+        })
 
     return render(request, 'main_page.html', {
         "commit_info": commit_info,
         "changelog": changelog,
     })
-
 
 def history(request):
     return render(request, 'history.html')
@@ -184,3 +175,28 @@ def licas(request):
 
 def guido(request):
     return render(request, 'personagens/guido.html')
+
+def agug(request):
+    return render(request, 'personagens/agug.html')
+
+def berimbau(request):
+    return render(request, 'personagens/berimbau.html')
+
+def edward(request):
+    return render(request, 'personagens/edward.html')
+
+def exist(request):
+    return render(request, 'personagens/exist.html')
+
+def guto(request):
+    return render(request, 'personagens/guto.html')
+
+def karma(request):
+    return render(request, 'personagens/karma.html')
+
+def mab(request):
+    return render(request, 'personagens/mab.html')
+
+def ness(request):
+    return render(request, 'personagens/ness.html')
+

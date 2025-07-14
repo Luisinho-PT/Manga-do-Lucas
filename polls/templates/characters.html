@@ -12,41 +12,96 @@
     <h1 class="title">Personagens</h1>
     
     <div class="character-grid">
-        <!-- Personagem 1 -->
         <div class="character-card">
             <a href="{% url 'lucas' %}">
-                <img src="{% static 'img/lucas/lucas.png' %}" alt="LUUUUUUUUUUUUUUUUUUCAAAAAAAAAAAAAAASSSSSSSSSS">
+                <img src="{% static 'img/lucas/lucas.png' %}" alt="Lucas">
             </a>
             <p>Lycas</p>
         </div>
 
-        <!-- Personagem 2 -->
         <div class="character-card">
-            <a href=" {% url 'luis' %}">
-                <img src="{% static 'img/luis/luis.png' %}" alt="LUUUUUUUUUUUUUUUUUUIIIIIIIIIIIIIIIIIIIIIIIISSSSSSSSSSSSSSS">
+            <a href="{% url 'luis' %}">
+                <img src="{% static 'img/luis/luis.png' %}" alt="Luis">
             </a>
             <p>Luis</p>
         </div>
         
-        <!-- Personagem 3 -->
         <div class="character-card">
-            <a href=" {% url 'licas' %}">
-                <img src="{% static 'img/licas/licas.png' %}" alt="Niggas">
+            <a href="{% url 'licas' %}">
+                <img src="{% static 'img/licas/licas.png' %}" alt="Licas">
             </a>
             <p>Licas</p>
         </div>
 
-        <!-- Personagem 4-->
         <div class="character-card">
-            <a href=" {% url 'guido' %}">
+            <a href="{% url 'guido' %}">
                 <img src="{% static 'img/guido/guido.png' %}" alt="Guido">
             </a>
             <p>Guido</p>
         </div>
-        <!-- Adicione mais personagens abaixo seguindo o mesmo padrão -->
+
+        <!-- Novos personagens -->
+        <div class="character-card">
+            <a href="{% url 'agug' %}">
+                <img src="{% static 'img/agug/agug.png' %}" alt="Agug">
+            </a>
+            <p>Agug</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'berimbau' %}">
+                <img src="{% static 'img/berimbau/berimbau.png' %}" alt="Berimbau">
+            </a>
+            <p>Berimbau</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'edward' %}">
+                <img src="{% static 'img/edward/edward.png' %}" alt="Edward">
+            </a>
+            <p>Edward</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'exist' %}">
+                <img src="{% static 'img/exist/exist.png' %}" alt="Exist">
+            </a>
+            <p>Exist</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'guto' %}">
+                <img src="{% static 'img/guto/guto.png' %}" alt="Guto">
+            </a>
+            <p>Guto</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'karma' %}">
+                <img src="{% static 'img/karma/karma.png' %}" alt="Karma">
+            </a>
+            <p>Karma</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'mab' %}">
+                <img src="{% static 'img/mab/mab.png' %}" alt="Mab">
+            </a>
+            <p>Machiel</p>
+        </div>
+
+        <div class="character-card">
+            <a href="{% url 'ness' %}">
+                <img src="{% static 'img/ness/ness.png' %}" alt="Ness">
+            </a>
+            <p>Ness</p>
+        </div>
     </div>
+
     <div>
         <p><a class="return" href="{% url 'main_page' %}">Voltar para a Página Inicial</a></p>
     </div>
+
+    <script src="{% static 'js/no_chr/ordenar_personagem.js' %}"></script>
 </body>
 </html>

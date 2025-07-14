@@ -20,9 +20,16 @@ class Changelog(models.Model):
     commit_hash = models.CharField(max_length=40, unique=True)
     message = models.TextField()
     date = models.DateTimeField()
-
-    def local_date(self):
-        return localtime(self.date)
+    exibir = models.BooleanField(default=True)  # ✅ Adicione esta linha
 
     def __str__(self):
-        return f"{self.commit_hash[:7]} - {self.message[:50]}"
+        return self.message
+
+    
+class VersaoSistema(models.Model):
+    numero = models.CharField("Número da versão", max_length=20, default='1.0.0')
+    commit_hash = models.CharField("Commit hash", max_length=40, blank=True, null=True)
+    atualizado_em = models.DateTimeField("Atualizado em", auto_now=True)
+
+    def __str__(self):
+        return f"Versão {self.numero}"
