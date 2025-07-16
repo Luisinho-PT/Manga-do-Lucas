@@ -1,0 +1,138 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: #e6e6e6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Título da página */
+h1 {
+    color: #ffd700;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Container do vídeo e controles */
+.video-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 800px;
+    width: 100%;
+    position: relative; /* Essencial para posicionar elementos filhos */
+}
+
+/* Legenda em cima do vídeo */
+.video-caption {
+    position: absolute;
+    top: -2.5rem;
+    width: 100%;
+    text-align: center;
+    color: #ffd700;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+}
+
+/* Vídeo com estilo */
+.video-player {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+/* Botões de seta */
+.arrow-button {
+    background-color: transparent;
+    border: none;
+    font-size: 3rem;
+    color: #ffd700;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.arrow-button:hover {
+    color: #fff;
+}
+
+/* NOVO: Estilo para o botão de volume */
+.volume-button {
+    position: absolute;
+    bottom: 15px;
+    right: 20px; /* Ajustado para não sobrepor a seta */
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2rem;
+    padding: 8px 10px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.3s;
+}
+
+.volume-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+
+/* Container do controle de tempo */
+.time-control-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 700px;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+
+.time-control-container.visible {
+    display: flex;
+}
+
+.time-control-container input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+.time-control-container span {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .video-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .arrow-button {
+        font-size: 2.5rem;
+    }
+    .video-caption {
+        position: static;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+    .volume-button {
+        /* Ajusta posição para o layout de coluna */
+        bottom: auto;
+        top: 15px;
+        right: 15px;
+    }
+}
