@@ -12,9 +12,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from dotenv import load_dotenv
 import os
 import dj_database_url
 import environ
+
+load_dotenv()  # Carrega variáveis do arquivo .env
 
 env = environ.Env()
 environ.Env.read_env()
@@ -88,6 +91,9 @@ WSGI_APPLICATION = 'manga.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASE_URL = config('DATABASE_URL', default='')
+if DATABASE_URL is None:
+    raise ValueError("A variável de ambiente DATABASE_URL não foi encontrada. Verifique seu arquivo .env ou as configurações do ambiente.")
+
 
 if DATABASE_URL:
     DATABASES = {
