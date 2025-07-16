@@ -54,9 +54,9 @@ function changeMedia(direction) {
 
     if (currentIndex === 2) { 
         timeControlContainer.classList.add('visible');
-        videoElement.loop = false;
+        videoElement.loop = true;
     } else {
-        timeControlContainer.classList.remove('visible');
+        timeControlContainer.classList.add('visible');
         videoElement.loop = true;
     }
 }
