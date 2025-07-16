@@ -69,11 +69,74 @@ h1 {
     color: #fff;
 }
 
-/* NOVO: Estilo para o botão de volume */
-.volume-button {
+
+/* Container do controle de tempo */
+.time-control-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 700px;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+
+.time-control-container span {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+
+/* --- ESTILOS UNIFICADOS PARA OS SLIDERS --- */
+
+/* Base para AMBOS os sliders (tempo e volume) */
+.time-slider,
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #555; /* Cor da trilha de fundo */
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Estilo do "polegar" (bolinha) para AMBOS os sliders */
+.time-slider::-webkit-slider-thumb,
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+}
+.time-slider::-moz-range-thumb,
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+    border: none;
+}
+
+/* Estilo específico para a barra de TEMPO (horizontal) */
+.time-slider {
+    width: 100%;
+    height: 8px;
+}
+
+
+/* Container que agrupa o botão e o slider de volume */
+.volume-control-container {
     position: absolute;
+    right: 20px;
     bottom: 15px;
-    right: 20px; /* Ajustado para não sobrepor a seta */
+    display: flex;
+    align-items: center;
+}
+
+/* Botão de volume (sem alterações de posicionamento) */
+.volume-button {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     border-radius: 5px;
@@ -85,35 +148,29 @@ h1 {
     transition: background 0.3s;
 }
 
-.volume-button:hover {
-    background: rgba(0, 0, 0, 0.8);
-}
-
-
-/* Container do controle de tempo */
-.time-control-container {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 700px;
-    margin-top: 1rem;
-    gap: 0.5rem;
-}
-
-.time-control-container.visible {
-    display: flex;
-}
-
-.time-control-container input[type="range"] {
-    width: 100%;
+/* O slider de volume, agora horizontal */
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px; /* Espessura da barra */
+    background: #555;
+    border-radius: 5px;
+    outline: none;
     cursor: pointer;
+    /* Escondido por padrão, aparece com uma transição suave */
+    width: 0;
+    opacity: 0;
+    margin-left: 0;
+    transition: width 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
 }
 
-.time-control-container span {
-    font-size: 0.9rem;
-    color: #ccc;
+/* Mostra o slider de volume quando a classe .visible é adicionada pelo JS */
+.volume-slider.visible {
+    width: 80px; /* Largura do slider quando visível */
+    opacity: 1;
+    margin-left: 10px; /* Espaçamento entre o botão e o slider */
 }
+
 
 /* Mobile */
 @media (max-width: 768px) {
@@ -129,8 +186,9 @@ h1 {
         margin-bottom: 0.5rem;
         font-size: 1.2rem;
     }
-    .volume-button {
-        /* Ajusta posição para o layout de coluna */
+
+    /* Ajusta a posição de todo o controle de volume no mobile */
+    .volume-control-container {
         bottom: auto;
         top: 15px;
         right: 15px;

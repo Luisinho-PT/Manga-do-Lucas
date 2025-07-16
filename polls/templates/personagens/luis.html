@@ -22,11 +22,14 @@
 
         <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
 
-        <button id="volumeButton" class="volume-button">&#128264;</button>
+        <div class="volume-control-container">
+            <button id="volumeButton" class="volume-button"></button>
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
+        </div>
     </div>
 
     <div id="time-control-container" class="time-control-container">
-        <input type="range" id="timeSlider" min="0" max="100" value="0" />
+        <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
         <span id="timeDisplay">00:00 / 00:00</span>
     </div>
 
