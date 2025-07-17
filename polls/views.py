@@ -186,5 +186,5 @@ def pagina_personagem(request, nome_do_personagem):
     }
 
     # 3. A view fica muito mais enxuta e legível
-    return render(request, 'personagens/personagem.html', context)
+    return render(request, 'personagem.html', context)
 

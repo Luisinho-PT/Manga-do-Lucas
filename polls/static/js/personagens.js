@@ -1,4 +1,4 @@
-// personagens.js - CORREÇÃO DE VISIBILIDADE
+// personagens.js - CORREÇÃO FINAL COM CLICK-TO-PAUSE
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const timeControlContainer = document.getElementById('time-control-container');
     const timeSlider = document.getElementById('timeSlider');
     const timeDisplay = document.getElementById('timeDisplay');
-    const playPauseButton = document.getElementById('playPauseButton');
+    // const playPauseButton = document.getElementById('playPauseButton'); // REMOVIDO
     const volumeButton = document.getElementById('volumeButton');
     const volumeSlider = document.getElementById('volumeSlider');
     const volumeControlContainer = document.querySelector('.volume-control-container');
@@ -35,7 +35,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const currentMedia = mediaList[currentIndex];
         if (captionElement) { captionElement.textContent = currentMedia.caption || ''; }
 
-        // --- LÓGICA DE EXIBIÇÃO CORRIGIDA ---
         if (currentMedia.type === 'image') {
             videoElement.style.display = 'none';
             videoElement.pause();
@@ -43,10 +42,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 imageElement.src = currentMedia.src;
                 imageElement.style.display = 'block';
             }
-            // CORREÇÃO: Força o desaparecimento dos controles
             if (timeControlContainer) timeControlContainer.style.display = 'none';
             if (volumeControlContainer) volumeControlContainer.style.display = 'none';
-            if (playPauseButton) playPauseButton.style.display = 'none';
 
         } else { // Se for um vídeo:
             if(imageElement) imageElement.style.display = 'none';
@@ -54,10 +51,8 @@ window.addEventListener('DOMContentLoaded', () => {
             videoElement.style.display = 'block';
             if (sourceElement) sourceElement.src = currentMedia.src;
             
-            // CORREÇÃO: Força o aparecimento dos controles
             if (timeControlContainer) timeControlContainer.style.display = 'flex';
             if (volumeControlContainer) volumeControlContainer.style.display = 'flex';
-            if (playPauseButton) playPauseButton.style.display = 'block';
 
             if (videoElement.classList) { videoElement.classList.toggle("small-height", !!currentMedia.small); }
             
@@ -69,18 +64,21 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- LÓGICA DE PLAY/PAUSE SIMPLIFICADA ---
     function togglePlayPause() {
-        if (videoElement.paused) { videoElement.play(); } else { videoElement.pause(); }
+        if (videoElement.paused) {
+            videoElement.play();
+        } else {
+            videoElement.pause();
+        }
     }
-
-    function updatePlayPauseIcon() {
-        if (!playPauseButton) return;
-        playPauseButton.innerHTML = videoElement.paused ? '&#9658;' : '&#10074;&#10074;';
-    }
-    if(playPauseButton) playPauseButton.addEventListener('click', togglePlayPause);
-    videoElement.addEventListener('play', updatePlayPauseIcon);
-    videoElement.addEventListener('pause', updatePlayPauseIcon);
     
+    // ADICIONADO: Clicar no próprio vídeo agora pausa ou toca.
+    videoElement.addEventListener('click', togglePlayPause);
+    
+    // Toda a lógica de 'updatePlayPauseIcon' e seu listener foram removidos.
+    
+    // --- LÓGICA DE VOLUME ---
     if(volumeButton && volumeSlider && volumeControlContainer) {
         volumeButton.addEventListener('click', (e) => { e.stopPropagation(); volumeSlider.classList.toggle('visible'); });
         volumeSlider.addEventListener('input', (e) => { const newVolume = e.target.value / 100; currentVolume = newVolume; videoElement.volume = currentVolume; videoElement.muted = newVolume === 0; updateVolumeIcon(); updateVolumeSliderBackground(); });
@@ -89,6 +87,7 @@ window.addEventListener('DOMContentLoaded', () => {
     function updateVolumeSliderBackground() { if(volumeSlider) volumeSlider.style.background = `linear-gradient(to right, #ffd700 ${volumeSlider.value}%, #555 ${volumeSlider.value}%)`; }
     function updateVolumeIcon() { if(volumeButton) volumeButton.innerHTML = (videoElement.muted || videoElement.volume === 0) ? '&#128264;' : '&#128266;'; }
 
+    // --- LÓGICA DA BARRA DE TEMPO ---
     if(timeSlider && timeDisplay) {
         videoElement.addEventListener('timeupdate', () => {
             if (isScrubbing) return;
@@ -112,6 +111,7 @@ window.addEventListener('DOMContentLoaded', () => {
         timeSlider.addEventListener('touchend', () => { isScrubbing = false; });
     }
 
+    // --- FUNÇÕES AUXILIARES E CARREGAMENTO INICIAL ---
     function formatTime(seconds) { const minutes = Math.floor(seconds / 60); const secs = Math.floor(seconds % 60); return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`; }
 
     videoElement.addEventListener('loadedmetadata', () => {
@@ -119,7 +119,6 @@ window.addEventListener('DOMContentLoaded', () => {
         if (timeDisplay && videoElement.duration && !isNaN(videoElement.duration)) { timeDisplay.textContent = `00:00 / ${formatTime(videoElement.duration)}`; }
         if(volumeSlider) { volumeSlider.value = currentVolume * 100; updateVolumeSliderBackground(); }
         updateVolumeIcon();
-        updatePlayPauseIcon();
     });
 
     window.changeMedia = changeMedia;
@@ -135,5 +134,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
     changeMedia(0);
     updateVolumeIcon();
-    updatePlayPauseIcon();
 });

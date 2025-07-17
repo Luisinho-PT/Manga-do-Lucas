@@ -23,6 +23,6 @@ urlpatterns = [
     path('history/', history , name='history'),  # History page URL
     path('characters/', characters, name='characters'),  # Characters page URL
     path('chapters/', chapters, name='chapters'),  # Chapters page URL
-    path('about/', about, name='about'),
-    path('personagens/<str:nome_do_personagem>/', pagina_personagem ,name='pagina_personagem')
+    path('about/', about, name='about'), # About page URL
+    path('characters/<str:nome_do_personagem>/', pagina_personagem ,name='pagina_personagem') # Specific Character URL
 ]

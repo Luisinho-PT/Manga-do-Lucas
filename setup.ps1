@@ -18,4 +18,4 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 Write-Host "`n✅ Ambiente virtual '.venv' recriado com sucesso!"
-Write-Host "🌐 Configuração concluída. Você pode ativar o ambiente virtual com 'source $venvPath\Scripts\Activate.ps1'."
+Write-Host "🌐 Configuração concluída. Você pode ativar o ambiesnte virtual com 'source $venvPath\Scripts\Activate.ps1'."
