@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="{% static 'img/aba_pagina.png' %}" type="image/png" />
+    <link rel="stylesheet" href="{% static 'css/personagem.css' %}" />
+    <title>{{ nome_personagem|title }}</title>
+</head>
+<body>
+    <h1>{{ nome_personagem|upper }}</h1>
+
+    {% if media_list %}
+        
+        <div class="video-container">
+            <h2 id="videoCaption" class="video-caption"></h2>
+            <button class="arrow-button left" onclick="changeMedia(-1)">&#8592;</button>
+            <video id="mainVideo" class="video-player" muted autoplay loop>
+                <source id="videoSource" src="" type="video/mp4" />
+            </video>
+            <img id="mainImage" style="display: none;" />
+            <button id="playPauseButton" class="play-pause-button"></button>
+            <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
+            <div class="volume-control-container">
+                <button id="volumeButton" class="volume-button"></button>
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
+            </div>
+        </div>
+
+        <div id="time-control-container" class="time-control-container">
+            <span id="timeDisplay">00:00 / 00:00</span>
+            <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
+        </div>
+
+        {{ media_list|json_script:"media-data" }}
+        <script src="{% static 'js/personagens.js' %}"></script>
+
+    {% else %}
+
+        <div class="content-placeholder">
+            <h2>Em breve, conteúdo para este personagem!</h2>
+        </div>
+
+    {% endif %}
+    </body>
+</html>

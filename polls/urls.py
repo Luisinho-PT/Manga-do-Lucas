@@ -24,16 +24,5 @@ urlpatterns = [
     path('characters/', characters, name='characters'),  # Characters page URL
     path('chapters/', chapters, name='chapters'),  # Chapters page URL
     path('about/', about, name='about'),
-    path('characters/lucas', lucas, name='lucas'),
-    path('characters/luis', luis, name='luis'),
-    path('characters/licas', licas, name='licas'), 
-    path('characters/guido', guido, name='guido'),
-    path('personagens/agug/', agug, name='agug'),
-    path('personagens/berimbau/', berimbau, name='berimbau'),
-    path('personagens/edward/', edward, name='edward'),
-    path('personagens/exist/', exist, name='exist'),
-    path('personagens/guto/', guto, name='guto'),
-    path('personagens/karma/', karma, name='karma'),
-    path('personagens/mab/', mab, name='mab'),
-    path('personagens/ness/', ness, name='ness'),
+    path('personagens/<str:nome_do_personagem>/', pagina_personagem ,name='pagina_personagem')
 ]

@@ -1,6 +1,7 @@
 import os 
 import requests
 
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.core.paginator import Paginator
@@ -9,6 +10,7 @@ from .models import Comment, Changelog, VersaoSistema
 from datetime import datetime, timedelta, timezone
 from django.utils.timezone import make_aware
 import pytz
+from .dados import dados
 
 
 def save_recent_commits_to_db(after_commit=None, limit=5):
@@ -137,7 +139,14 @@ def history(request):
     return render(request, 'history.html')
 
 def characters(request):
-    return render(request, 'characters.html')
+    # Pega todas as chaves (nomes dos personagens) do seu dicionário de dados
+    nomes_dos_personagens = list(dados.keys())
+
+    # Passa a lista de nomes para o template
+    context = {
+        'personagens': nomes_dos_personagens
+    }
+    return render(request, 'characters.html', context)
 
 def chapters(request):
     return render(request, 'chapters.html')
@@ -164,39 +173,18 @@ def about(request):
         'comments': comments_page
     })
 
-def lucas(request):
-    return render(request, 'personagens/lucas.html')
+def pagina_personagem(request, nome_do_personagem):
+    # 2. Busque os dados do personagem a partir do dicionário importado
+    media_list_data = dados.get(nome_do_personagem.lower())
 
-def luis(request):
-    return render(request, 'personagens/luis.html')
+    if media_list_data is None:
+        raise Http404("Personagem não encontrado")
 
-def licas(request):
-    return render(request, 'personagens/licas.html')
+    context = {
+        'nome_personagem': nome_do_personagem,
+        'media_list': media_list_data
+    }
 
-def guido(request):
-    return render(request, 'personagens/guido.html')
-
-def agug(request):
-    return render(request, 'personagens/agug.html')
-
-def berimbau(request):
-    return render(request, 'personagens/berimbau.html')
-
-def edward(request):
-    return render(request, 'personagens/edward.html')
-
-def exist(request):
-    return render(request, 'personagens/exist.html')
-
-def guto(request):
-    return render(request, 'personagens/guto.html')
-
-def karma(request):
-    return render(request, 'personagens/karma.html')
-
-def mab(request):
-    return render(request, 'personagens/mab.html')
-
-def ness(request):
-    return render(request, 'personagens/ness.html')
+    # 3. A view fica muito mais enxuta e legível
+    return render(request, 'personagens/personagem.html', context)
 

@@ -46,13 +46,26 @@ h1 {
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
 }
 
-/* Vídeo com estilo */
-.video-player {
+
+/* --- ESTILO PADRONIZADO PARA VÍDEO E IMAGEM (CORRIGIDO) --- */
+
+/* Esta regra agora se aplica a ambos, vídeo e imagem */
+.video-player, 
+#mainImage {
+    /* 1. Definimos um "caixote" com tamanho padrão */
     width: 100%;
     max-width: 700px;
+    height: 400px; /* Altura padrão para um aspecto 16:9 aproximado */
+    
+    /* 2. Dizemos como a mídia deve se comportar dentro do caixote */
+    object-fit: contain; /* Garante que toda a mídia caiba, mantendo a proporção */
+    
+    /* 3. Estilos visuais */
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    background-color: #000; /* Fundo preto para as áreas vazias (letterboxing) */
 }
+
 
 /* Botões de seta */
 .arrow-button {
@@ -90,8 +103,7 @@ h1 {
 /* --- ESTILOS UNIFICADOS PARA OS SLIDERS --- */
 
 /* Base para AMBOS os sliders (tempo e volume) */
-.time-slider,
-.volume-slider {
+.time-slider, .volume-slider {
     -webkit-appearance: none;
     appearance: none;
     background: #555; /* Cor da trilha de fundo */
@@ -101,8 +113,7 @@ h1 {
 }
 
 /* Estilo do "polegar" (bolinha) para AMBOS os sliders */
-.time-slider::-webkit-slider-thumb,
-.volume-slider::-webkit-slider-thumb {
+.time-slider::-webkit-slider-thumb, .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
@@ -110,8 +121,7 @@ h1 {
     background: #ffd700;
     border-radius: 50%;
 }
-.time-slider::-moz-range-thumb,
-.volume-slider::-moz-range-thumb {
+.time-slider::-moz-range-thumb, .volume-slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
     background: #ffd700;
