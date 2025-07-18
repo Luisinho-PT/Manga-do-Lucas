@@ -1,12 +1,9 @@
-// personagens.js - CORREÇÃO FINAL COM CLICK-TO-PAUSE
+// personagens.js - VERSÃO FINAL COM LÓGICA EXCLUSIVA COMPLETA
 
 window.addEventListener('DOMContentLoaded', () => {
 
     const mediaDataElement = document.getElementById('media-data');
-    if (!mediaDataElement) {
-        console.error("Elemento 'media-data' não encontrado.");
-        return;
-    }
+    if (!mediaDataElement) { console.error("Elemento 'media-data' não encontrado."); return; }
     const mediaList = JSON.parse(mediaDataElement.textContent);
 
     let currentIndex = 0;
@@ -20,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const timeControlContainer = document.getElementById('time-control-container');
     const timeSlider = document.getElementById('timeSlider');
     const timeDisplay = document.getElementById('timeDisplay');
-    // const playPauseButton = document.getElementById('playPauseButton'); // REMOVIDO
+    // const playPauseButton = document.getElementById('playPauseButton');
     const volumeButton = document.getElementById('volumeButton');
     const volumeSlider = document.getElementById('volumeSlider');
     const volumeControlContainer = document.querySelector('.volume-control-container');
@@ -38,24 +35,18 @@ window.addEventListener('DOMContentLoaded', () => {
         if (currentMedia.type === 'image') {
             videoElement.style.display = 'none';
             videoElement.pause();
-            if(imageElement) {
-                imageElement.src = currentMedia.src;
-                imageElement.style.display = 'block';
-            }
+            if(imageElement) { imageElement.src = currentMedia.src; imageElement.style.display = 'block'; }
             if (timeControlContainer) timeControlContainer.style.display = 'none';
             if (volumeControlContainer) volumeControlContainer.style.display = 'none';
-
-        } else { // Se for um vídeo:
+            if (playPauseButton) playPauseButton.style.display = 'none';
+        } else {
             if(imageElement) imageElement.style.display = 'none';
-            
             videoElement.style.display = 'block';
             if (sourceElement) sourceElement.src = currentMedia.src;
-            
             if (timeControlContainer) timeControlContainer.style.display = 'flex';
             if (volumeControlContainer) volumeControlContainer.style.display = 'flex';
-
+            if (playPauseButton) playPauseButton.style.display = 'block';
             if (videoElement.classList) { videoElement.classList.toggle("small-height", !!currentMedia.small); }
-            
             videoElement.load();
             videoElement.play().catch(error => console.log("Autoplay bloqueado.", error));
             videoElement.volume = currentVolume;
@@ -64,21 +55,13 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE PLAY/PAUSE SIMPLIFICADA ---
     function togglePlayPause() {
-        if (videoElement.paused) {
-            videoElement.play();
-        } else {
-            videoElement.pause();
-        }
+        if (videoElement.paused) { videoElement.play(); } else { videoElement.pause(); }
     }
     
-    // ADICIONADO: Clicar no próprio vídeo agora pausa ou toca.
+    // Lógica de click-to-pause no vídeo
     videoElement.addEventListener('click', togglePlayPause);
-    
-    // Toda a lógica de 'updatePlayPauseIcon' e seu listener foram removidos.
-    
-    // --- LÓGICA DE VOLUME ---
+
     if(volumeButton && volumeSlider && volumeControlContainer) {
         volumeButton.addEventListener('click', (e) => { e.stopPropagation(); volumeSlider.classList.toggle('visible'); });
         volumeSlider.addEventListener('input', (e) => { const newVolume = e.target.value / 100; currentVolume = newVolume; videoElement.volume = currentVolume; videoElement.muted = newVolume === 0; updateVolumeIcon(); updateVolumeSliderBackground(); });
@@ -87,7 +70,6 @@ window.addEventListener('DOMContentLoaded', () => {
     function updateVolumeSliderBackground() { if(volumeSlider) volumeSlider.style.background = `linear-gradient(to right, #ffd700 ${volumeSlider.value}%, #555 ${volumeSlider.value}%)`; }
     function updateVolumeIcon() { if(volumeButton) volumeButton.innerHTML = (videoElement.muted || videoElement.volume === 0) ? '&#128264;' : '&#128266;'; }
 
-    // --- LÓGICA DA BARRA DE TEMPO ---
     if(timeSlider && timeDisplay) {
         videoElement.addEventListener('timeupdate', () => {
             if (isScrubbing) return;
@@ -111,7 +93,6 @@ window.addEventListener('DOMContentLoaded', () => {
         timeSlider.addEventListener('touchend', () => { isScrubbing = false; });
     }
 
-    // --- FUNÇÕES AUXILIARES E CARREGAMENTO INICIAL ---
     function formatTime(seconds) { const minutes = Math.floor(seconds / 60); const secs = Math.floor(seconds % 60); return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`; }
 
     videoElement.addEventListener('loadedmetadata', () => {
@@ -123,15 +104,68 @@ window.addEventListener('DOMContentLoaded', () => {
 
     window.changeMedia = changeMedia;
 
+    // --- LÓGICA EXCLUSIVA PARA O LUCAS (RESTAURADA E CORRIGIDA) ---
     if (randomButtonsContainer) {
         const clickedButtons = new Set();
-        function showFinalPopup() { const popup = document.getElementById('finalPopupImage'); if (popup) popup.style.display = 'block'; setTimeout(() => { if (popup) popup.style.display = 'none'; }, 3000); }
-        window.registerClick = function(buttonId) { clickedButtons.add(buttonId); if (clickedButtons.size === 3) { showFinalPopup(); clickedButtons.clear(); } }
+
+        function randomizeButtons() {
+            const container = randomButtonsContainer;
+            if (!container) return;
+            ['btn1', 'btn2', 'btn3'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    const x = Math.random() * (container.clientWidth - 30); // Subtrai a largura do botão
+                    const y = Math.random() * (container.clientHeight - 30); // Subtrai a altura
+                    btn.style.left = `${x}px`;
+                    btn.style.top = `${y}px`;
+                }
+            });
+        }
+
+        function showFinalPopup() {
+            const popupContainer = document.getElementById('popupContainer');
+            if (!popupContainer) return;
+
+            popupContainer.style.display = 'flex';
+            setTimeout(() => {
+                popupContainer.classList.add('visible');
+            }, 10);
+
+            setTimeout(() => {
+                popupContainer.classList.remove('visible');
+                setTimeout(() => {
+                    popupContainer.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+
+        window.registerClick = function(buttonId) {
+            const btn = document.getElementById(buttonId);
+            if(btn) btn.style.display = 'none'; // Esconde o botão ao clicar
+            
+            clickedButtons.add(buttonId);
+
+            if (clickedButtons.size === 3) {
+                showFinalPopup();
+                clickedButtons.clear();
+                // Opcional: Reaparece e aleatoriza os botões após o ciclo
+                setTimeout(() => {
+                    ['btn1', 'btn2', 'btn3'].forEach(id => {
+                        const btn = document.getElementById(id);
+                        if(btn) btn.style.display = 'block';
+                    });
+                    randomizeButtons();
+                }, 4000);
+            }
+        }
+        
+        randomizeButtons();
+        window.addEventListener('resize', randomizeButtons);
     }
 
+    // --- INICIALIZAÇÃO ---
     videoElement.muted = true;
     document.body.addEventListener('click', () => { if (videoElement.muted) { videoElement.muted = false; updateVolumeIcon(); } }, { once: true });
-
     changeMedia(0);
     updateVolumeIcon();
 });

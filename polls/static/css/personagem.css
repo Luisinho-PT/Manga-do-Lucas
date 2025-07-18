@@ -181,6 +181,63 @@ h1 {
     margin-left: 10px; /* Espaçamento entre o botão e o slider */
 }
 
+/* --- Elementos Específicos (Página do Lucas) --- */
+.random-button-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* Alinha com a largura do player */
+    height: 150px;
+    margin-top: 2rem;
+}
+.random-button-container button {
+    position: absolute;
+    width: 30px; /* Aumentei um pouco para melhor clique */
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+    transition: transform 0.2s ease;
+    /* Garante que os botões estejam acima do vídeo */
+    z-index: 9999;
+}
+.random-button-container button:hover {
+    transform: scale(1.3);
+    background-color: #555;
+}
+
+/* NOVO: Estilo para o container do popup (fundo escuro) */
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Fundo preto semi-transparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Garante que o popup esteja NA FRENTE DE TUDO */
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none; /* Não pode ser clicado quando invisível */
+    transition: opacity 0.5s ease-in-out;
+}
+.popup-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Imagem dentro do popup - AUMENTANDO O TAMANHO */
+.popup-image {
+    width: 80%; /* Ocupa 80% da largura da tela */
+    height: 80%; /* Ocupa 80% da altura da tela */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
 
 /* Mobile */
 @media (max-width: 768px) {
