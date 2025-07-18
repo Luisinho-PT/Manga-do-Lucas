@@ -11,33 +11,41 @@
 <body>
     <h1>{{ nome_personagem|upper }}</h1>
 
-    <div class="video-container">
-        <h2 id="videoCaption" class="video-caption"></h2>
-        <button class="arrow-button left" onclick="changeMedia(-1)">&#8592;</button>
-        <video id="mainVideo" class="video-player" muted autoplay loop>
-            <source id="videoSource" src="" type="video/mp4" />
-        </video>
-        <img id="mainImage" style="display: none;" />        
-        <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
-        <div class="volume-control-container">
-            <button id="volumeButton" class="volume-button"></button>
-            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
+    {% if media_list %}
+        <div class="video-container">
+            <h2 id="videoCaption" class="video-caption"></h2>
+            <button class="arrow-button left" onclick="changeMedia(-1)">&#8592;</button>
+            <video id="mainVideo" class="video-player" muted autoplay loop>
+                <source id="videoSource" src="" type="video/mp4" />
+            </video>
+            <img id="mainImage" style="display: none;" />        
+            <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
+            <div class="volume-control-container">
+                <button id="volumeButton" class="volume-button"></button>
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
+            </div>
         </div>
-    </div>
-    <div id="time-control-container" class="time-control-container">
-        <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
-        <span id="timeDisplay">00:00 / 00:00</span>
-    </div>
+        <div id="time-control-container" class="time-control-container">
+            <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
+            <span id="timeDisplay">00:00 / 00:00</span>
+        </div>
 
-    {% if nome_personagem == 'lucas' %}
-        <div class="random-button-container">
-            <button id="btn1" onclick="registerClick('btn1')">🔵</button>
-            <button id="btn2" onclick="registerClick('btn2')">🟢</button>
-            <button id="btn3" onclick="registerClick('btn3')">🔴</button>
+        {% if nome_personagem == 'lucas' %}
+            <div class="random-button-container">
+                <button id="btn1" onclick="registerClick('btn1')">🔵</button>
+                <button id="btn2" onclick="registerClick('btn2')">🟢</button>
+                <button id="btn3" onclick="registerClick('btn3')">🔴</button>
+            </div>
+            <div id="popupContainer" class="popup-container" style="display: none;">
+                <img id="finalPopupImage" class="popup-image" src="{% static 'img/lucas/lucas_careca.png' %}" />
+            </div>
+        {% endif %}
+    {% else %}
+
+        <div class="content-placeholder">
+            <h2>Em breve, conteúdo para este personagem!</h2>
         </div>
-        <div id="popupContainer" class="popup-container" style="display: none;">
-            <img id="finalPopupImage" class="popup-image" src="{% static 'img/lucas/lucas_careca.png' %}" />
-        </div>
+
     {% endif %}
     {{ media_list|json_script:"media-data" }}
     <script src="{% static 'js/personagens.js' %}"></script>

@@ -1,4 +1,4 @@
-// personagens.js - VERSÃO FINAL COM LÓGICA EXCLUSIVA COMPLETA
+// personagens.js - VERSÃO FINAL
 
 window.addEventListener('DOMContentLoaded', () => {
 
