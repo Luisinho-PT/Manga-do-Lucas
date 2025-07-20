@@ -1,4 +1,8 @@
-/* Reset básico */
+/* ===================================================================
+   CSS PADRONIZADO PARA A PAGINA DE PERSONAGEM
+   =================================================================== */
+
+/* --- Configurações Gerais e Reset --- */
 * {
     margin: 0;
     padding: 0;
@@ -15,7 +19,6 @@ body {
     padding: 2rem;
 }
 
-/* Título da página */
 h1 {
     color: #ffd700;
     margin-bottom: 2rem;
@@ -23,7 +26,7 @@ h1 {
     font-size: 1rem;
 }
 
-/* Container do vídeo e controles */
+/* --- Player Principal --- */
 .video-container {
     display: flex;
     align-items: center;
@@ -31,10 +34,9 @@ h1 {
     gap: 1rem;
     max-width: 800px;
     width: 100%;
-    position: relative; /* Essencial para posicionar elementos filhos */
+    position: relative;
 }
 
-/* Legenda em cima do vídeo */
 .video-caption {
     position: absolute;
     top: -2.5rem;
@@ -46,30 +48,25 @@ h1 {
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
 }
 
-
-/* --- ESTILO PADRONIZADO PARA VÍDEO E IMAGEM (CORRIGIDO) --- */
-
-/* Esta regra agora se aplica a ambos, vídeo e imagem */
-.video-player, 
+.video-player,
 #mainImage {
-    /* 1. Definimos um "caixote" com tamanho padrão */
     width: 100%;
     max-width: 700px;
-    height: 400px; /* Altura padrão para um aspecto 16:9 aproximado */
-    
-    /* 2. Dizemos como a mídia deve se comportar dentro do caixote */
-    object-fit: contain; /* Garante que toda a mídia caiba, mantendo a proporção */
-    
-    /* 3. Estilos visuais */
+    height: 400px;
+    object-fit: contain;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-    background-color: #000; /* Fundo preto para as áreas vazias (letterboxing) */
+    background-color: #000;
+    cursor: pointer;
 }
 
+.video-player.small-height {
+    max-height: 400px;
+    width: auto;
+}
 
-/* Botões de seta */
 .arrow-button {
-    background-color: transparent;
+    background: transparent;
     border: none;
     font-size: 3rem;
     color: #ffd700;
@@ -83,9 +80,9 @@ h1 {
 }
 
 
-/* Container do controle de tempo */
+/* --- Barra de Controles de Tempo --- */
 .time-control-container {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
@@ -94,49 +91,64 @@ h1 {
     gap: 0.5rem;
 }
 
+.time-control-container.visible {
+    display: flex;
+}
+
 .time-control-container span {
     font-size: 0.9rem;
     color: #ccc;
+    white-space: nowrap;
 }
 
+.slider-wrapper {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
 
-/* --- ESTILOS UNIFICADOS PARA OS SLIDERS --- */
-
-/* Base para AMBOS os sliders (tempo e volume) */
-.time-slider, .volume-slider {
+.time-slider {
     -webkit-appearance: none;
     appearance: none;
-    background: #555; /* Cor da trilha de fundo */
+    width: 100%;
+    height: 8px;
+    background: #555;
     border-radius: 5px;
     outline: none;
     cursor: pointer;
 }
 
-/* Estilo do "polegar" (bolinha) para AMBOS os sliders */
-.time-slider::-webkit-slider-thumb, .volume-slider::-webkit-slider-thumb {
+/* Esconde o marcador (thumb) original */
+.time-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
+    background: transparent;
+    border: none;
     width: 20px;
     height: 20px;
-    background: #ffd700;
-    border-radius: 50%;
 }
-.time-slider::-moz-range-thumb, .volume-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #ffd700;
-    border-radius: 50%;
+.time-slider::-moz-range-thumb {
+    background: transparent;
     border: none;
 }
 
-/* Estilo específico para a barra de TEMPO (horizontal) */
-.time-slider {
-    width: 100%;
-    height: 8px;
+/* Estilo do marcador customizado e suave */
+.custom-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
 
-/* Container que agrupa o botão e o slider de volume */
+/* --- Controle de Volume --- */
 .volume-control-container {
     position: absolute;
     right: 20px;
@@ -145,7 +157,6 @@ h1 {
     align-items: center;
 }
 
-/* Botão de volume (sem alterações de posicionamento) */
 .volume-button {
     background: rgba(0, 0, 0, 0.5);
     border: none;
@@ -158,40 +169,54 @@ h1 {
     transition: background 0.3s;
 }
 
-/* O slider de volume, agora horizontal */
 .volume-slider {
     -webkit-appearance: none;
     appearance: none;
-    height: 8px; /* Espessura da barra */
+    height: 8px;
     background: #555;
     border-radius: 5px;
     outline: none;
     cursor: pointer;
-    /* Escondido por padrão, aparece com uma transição suave */
     width: 0;
     opacity: 0;
     margin-left: 0;
     transition: width 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
 }
 
-/* Mostra o slider de volume quando a classe .visible é adicionada pelo JS */
 .volume-slider.visible {
-    width: 80px; /* Largura do slider quando visível */
+    width: 80px;
     opacity: 1;
-    margin-left: 10px; /* Espaçamento entre o botão e o slider */
+    margin-left: 10px;
 }
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+}
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+    border: none;
+}
+
 
 /* --- Elementos Específicos (Página do Lucas) --- */
 .random-button-container {
     position: relative;
     width: 100%;
-    max-width: 800px; /* Alinha com a largura do player */
+    max-width: 800px;
     height: 150px;
     margin-top: 2rem;
 }
 .random-button-container button {
     position: absolute;
-    width: 30px; /* Aumentei um pouco para melhor clique */
+    width: 30px;
     height: 30px;
     border-radius: 50%;
     border: none;
@@ -200,7 +225,6 @@ h1 {
     background-color: #333;
     color: #fff;
     transition: transform 0.2s ease;
-    /* Garante que os botões estejam acima do vídeo */
     z-index: 9999;
 }
 .random-button-container button:hover {
@@ -208,21 +232,19 @@ h1 {
     background-color: #555;
 }
 
-/* NOVO: Estilo para o container do popup (fundo escuro) */
 .popup-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Fundo preto semi-transparente */
+    background-color: rgba(0, 0, 0, 0.85);
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Garante que o popup esteja NA FRENTE DE TUDO */
     z-index: 10000;
     opacity: 0;
-    pointer-events: none; /* Não pode ser clicado quando invisível */
+    pointer-events: none;
     transition: opacity 0.5s ease-in-out;
 }
 .popup-container.visible {
@@ -230,16 +252,77 @@ h1 {
     pointer-events: auto;
 }
 
-/* Imagem dentro do popup - AUMENTANDO O TAMANHO */
 .popup-image {
-    width: 80%; /* Ocupa 80% da largura da tela */
-    height: 80%; /* Ocupa 80% da altura da tela */
+    max-width: 80vw;
+    max-height: 80vh;
+    height: auto;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
 }
 
+/* ================================== */
+/* ESTILOS DOS BALÕES          */
+/* ================================== */
 
-/* Mobile */
+#balloon-container {
+    position: fixed; /* Ocupa a tela toda, independente da rolagem */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+    pointer-events: none; /* Permite clicar através do container */
+    overflow: hidden; /* Garante que balões não criem barras de rolagem */
+}
+
+.speech-balloon {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #1a1a1a;
+    padding: 15px 20px;
+    border-radius: 20px;
+    border: 2px solid #ffd700;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    max-width: 250px;
+    text-align: center;
+    cursor: pointer;
+    pointer-events: all; /* Torna apenas o balão clicável */
+    transform: scale(0);
+    animation: balloon-appear 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.speech-balloon.popping {
+    animation: balloon-pop 0.4s ease-in-out forwards;
+}
+
+/* Animação de aparição */
+@keyframes balloon-appear {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Animação ao clicar (sumiço) */
+@keyframes balloon-pop {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(0.2);
+        opacity: 0;
+    }
+}
+
+/* --- Media Queries (Mobile) --- */
 @media (max-width: 768px) {
     .video-container {
         flex-direction: column;
@@ -253,8 +336,6 @@ h1 {
         margin-bottom: 0.5rem;
         font-size: 1.2rem;
     }
-
-    /* Ajusta a posição de todo o controle de volume no mobile */
     .volume-control-container {
         bottom: auto;
         top: 15px;

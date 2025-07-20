@@ -174,17 +174,32 @@ def about(request):
     })
 
 def pagina_personagem(request, nome_do_personagem):
-    # 2. Busque os dados do personagem a partir do dicionário importado
-    media_list_data = dados.get(nome_do_personagem.lower())
+    """
+    Esta view busca os dados completos de um personagem (mídias e balões)
+    e os envia para o template renderizar.
+    """
+    
+    # 1. Busque o DICIONÁRIO completo do personagem.
+    character_data = dados.get(nome_do_personagem.lower())
 
-    if media_list_data is None:
+    # 2. Verifique se o personagem existe. Se não, levante um erro 404.
+    #    Esta parte do seu código já estava perfeita.
+    if character_data is None:
         raise Http404("Personagem não encontrado")
 
+    # 3. Extraia CADA lista de dentro do dicionário do personagem.
+    #    Usamos .get() com uma lista vazia como padrão para segurança.
+    media_list = character_data.get('media_list', [])
+    balloon_data = character_data.get('balloon_data', [])
+
+    # 4. Monte o contexto com TODAS as variáveis que o template precisa.
     context = {
         'nome_personagem': nome_do_personagem,
-        'media_list': media_list_data
+        'media_list': media_list,
+        'balloon_data': balloon_data,  # <-- Enviando os dados dos balões
     }
 
-    # 3. A view fica muito mais enxuta e legível
+    # 5. Renderize o template com o contexto completo.
+    #    Lembre-se de usar o caminho correto para seu template.
     return render(request, 'personagem.html', context)
 

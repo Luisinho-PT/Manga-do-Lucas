@@ -18,7 +18,10 @@
             <video id="mainVideo" class="video-player" muted autoplay loop>
                 <source id="videoSource" src="" type="video/mp4" />
             </video>
-            <img id="mainImage" style="display: none;" />        
+
+            <audio id="visualizerAudioSource" style="display: none;"></audio>
+
+            <img id="mainImage" style="display: none;" />
             <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
             <div class="volume-control-container">
                 <button id="volumeButton" class="volume-button"></button>
@@ -26,7 +29,10 @@
             </div>
         </div>
         <div id="time-control-container" class="time-control-container">
-            <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
+            <div class="slider-wrapper">
+                <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
+                <div id="customThumb" class="custom-thumb"></div>
+            </div>
             <span id="timeDisplay">00:00 / 00:00</span>
         </div>
 
@@ -40,14 +46,20 @@
                 <img id="finalPopupImage" class="popup-image" src="{% static 'img/lucas/lucas_careca.png' %}" />
             </div>
         {% endif %}
-    {% else %}
 
+        {% if nome_personagem == 'luis' %}
+            <div id="balloon-container"></div>
+        {% endif %}
+
+    {% else %}
         <div class="content-placeholder">
             <h2>Em breve, conteúdo para este personagem!</h2>
         </div>
-
     {% endif %}
+
     {{ media_list|json_script:"media-data" }}
+    {{ balloon_data|json_script:"balloon-data" }}
     <script src="{% static 'js/personagens.js' %}"></script>
+
 </body>
 </html>
