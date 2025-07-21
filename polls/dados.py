@@ -46,7 +46,9 @@ dados = {
         'balloon_data': []
     },
     'ness': {
-        'media_list': [],
+        'media_list': [
+            {'type': 'video', 'src': '/static/img/ness/ness_video.mp4', 'caption': 'É MAFIA, É MAFIA'},
+        ],
         'balloon_data': []
     },
     'karma': {
