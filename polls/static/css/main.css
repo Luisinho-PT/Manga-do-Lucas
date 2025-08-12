@@ -1,7 +1,7 @@
 /*
  * =================================================================
- * CSS FINAL E COMPLETO - Mangá do Luquinhas
- * Este arquivo corresponde à estrutura HTML final fornecida.
+ * CSS COMPLETO E FINALIZADO - Mangá do Luquinhas
+ * Implementando o Layout de Changelog com a "Opção 2" (Data Embaixo).
  * =================================================================
  */
 
@@ -138,7 +138,19 @@ body {
 
 /* --=[ 6. Conteúdo Principal e Changelog ]=-- */
 main {
+    /* Cor de fundo sólida que será usada como fallback */
     background-color: var(--color-surface);
+
+    /* As propriedades que faltavam, agora de volta */
+    background-image: 
+        linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)),
+        var(--main-bg-image);
+
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed; /* O efeito parallax */
+
+    /* O padding que já estava correto */
     padding: 4rem 1rem;
 }
 
@@ -171,12 +183,12 @@ main {
     list-style: none;
 }
 
+/* ESTILO DO CHANGELOG COM A OPÇÃO 2 APLICADA */
 .changelog-box li {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; 
-    gap: 1rem;
+    flex-direction: column;   /* Coloca os itens em coluna (um em cima do outro) */
+    align-items: flex-start;  /* Alinha tudo à esquerda */
+    gap: 0.5rem;              /* Espaço entre a mensagem e a data */
     padding: 1rem 0.5rem;
     border-bottom: 1px solid var(--color-border);
     transition: background-color 0.2s ease;
@@ -217,39 +229,21 @@ main {
     font-family: var(--font-monospace);
 }
 
-/* --=[ 7. Conteúdo Principal e Changelog ]=-- */
-main {
-    /* Cor de fundo sólida que será usada se nenhuma imagem for fornecida */
-    background-color: var(--color-surface);
-
-    /* A mágica acontece aqui:
-       1. Uma sobreposição escura para garantir a legibilidade.
-       2. A variável --main-bg-image, que receberá a URL da imagem do HTML.
-    */
-    background-image: 
-        linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)),
-        var(--main-bg-image);
-
-    /* Estilos para garantir que a imagem de fundo cubra a área corretamente */
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed; /* Cria um efeito parallax suave ao rolar */
-
-    padding: 4rem 1rem;
+/* --=[ 7. Rodapé ]=-- */
+.main-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-background);
+    text-align: center;
+    padding: 2rem;
+    min-height: 80px;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
 }
-
 
 /* --=[ 8. Responsividade ]=-- */
 @media (max-width: 768px) {
-    .changelog-box li {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-
-    .commit-date {
-        padding-left: 0;
-        width: 100%;
-        text-align: left;
-    }
+    /* A regra de responsividade para o changelog não é mais necessária com o layout da Opção 2 */
 }
