@@ -5,40 +5,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial - Mangá do Luquinhas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <title>Página Inicial</title>
 </head>
 <body>
-    <div>
-        <h1>Bem-vindo ao Mangá do Luquinhas!</h1>
-    </div>
 
-    <footer>
-        <a href="{% url 'history' %}"><dl>História</dl></a>
-        <a href="{% url 'characters' %}"><dl>Personagens</dl></a>
-        <a href="{% url 'chapters' %}"><dl>Capítulos</dl></a>
-        <a href="{% url 'about' %}"><dl>Sobre</dl></a>
-    </footer>
-
-    <div class="commit-info">
-        Versão: {{ commit_info }}
-    </div>
-
-    <div class="changelog-box-container">
-        <div class="changelog-box">
-            <h2>Changelog</h2>
-            <ul>
-            {% if changelog %}
-                {% for commit in changelog %}
-                    <li>- {{ commit.message }} - {{ commit.date }}</li>
-                {% endfor %}
-            {% else %}
-                <li>Nenhum commit recente encontrado.</li>
-            {% endif %}
-            </ul>
+    <header class="hero-header">
+        <div class="hero-content">
+            <h1>Bem-vindo ao Mangá do Luquinhas!</h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{% url 'history' %}">História</a></li>
+                    <li><a href="{% url 'characters' %}">Personagens</a></li>
+                    <li><a href="{% url 'chapters' %}">Capítulos</a></li>
+                    <li><a href="{% url 'about' %}">Sobre</a></li>
+                </ul>
+            </nav>
         </div>
-    </div>
+    </header>
+
+    <main 
+        {% if background_image_url %} 
+            style="--main-bg-image: url('{{ background_image_url }}');" 
+        {% endif %}>
+        
+        <section class="changelog-section">
+            <div class="version-info">
+                <p>Versão Atual: {{ commit_info }}</p>
+            </div>
+            
+            <div class="changelog-box">
+                <h2>Últimas Atualizações</h2>
+                <ul>
+                    {% if changelog %}
+                        {% for commit in changelog %}
+                            <li>
+                                <span class="commit-message">{{ commit.message }}</span>
+                                <span class="commit-date">{{ commit.date|date:"d/m/Y H:i" }}</span>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="no-commits">Nenhum commit recente encontrado.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; {% now "Y" %} Mangá do Luquinhas. Todos os direitos reservados.</p>
+    </footer>
 
     <script src="/_vercel/insights/script.js" defer></script>
 </body>

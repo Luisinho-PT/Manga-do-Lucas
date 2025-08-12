@@ -1,114 +1,255 @@
-/* Reset básico */
+/*
+ * =================================================================
+ * CSS FINAL E COMPLETO - Mangá do Luquinhas
+ * Este arquivo corresponde à estrutura HTML final fornecida.
+ * =================================================================
+ */
+
+/* --=[ 1. Variáveis Globais (Design System) ]=-- */
+:root {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-primary: #ffd700; /* Dourado Fandom */
+    --color-text: #e0e0e0;
+    --color-text-muted: #888;
+    --color-border: rgba(255, 255, 255, 0.1);
+
+    --font-headings: 'Poppins', sans-serif;
+    --font-body: 'Poppins', sans-serif;
+    --font-monospace: 'Roboto Mono', monospace;
+
+    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --primary-glow: 0 0 15px rgba(255, 215, 0, 0.6);
+    --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --=[ 2. Reset e Estilos Base ]=-- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    background-color: #1a1a1a; /* fundo escuro */
-    color: #e6e6e6;           /* texto claro */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-body);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Cabeçalho */
-h1 {
-    font-size: 2.5rem;
-    color: #ffd700; /* dourado fandom */
+/* --=[ 3. Scrollbar Personalizado ]=-- */
+/* Para Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 10px;
+    border: 3px solid var(--color-background);
+}
+
+/* Para Firefox */
+@supports (scrollbar-color: auto) {
+  * {
+    scrollbar-color: var(--color-primary) var(--color-background);
+    scrollbar-width: thin;
+  }
+}
+
+/* --=[ 4. Animações e Acessibilidade ]=-- */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Melhora a acessibilidade para navegação por teclado */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+/* --=[ 5. Cabeçalho e Navegação ]=-- */
+.hero-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 2rem 1rem;
-    background-color: #2b2b2b;
-    border-bottom: 2px solid #444;
+    padding: 5rem 1rem;
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('https://source.unsplash.com/1600x900/?dark,abstract,space') no-repeat center center/cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    position: relative;
 }
 
-h2 {
-    color: #ffd700; /* dourado fandom */
-    margin-bottom: 1rem;
-    text-align: center;
+.hero-header h1 {
+    font-family: var(--font-headings);
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    color: #FFFFFF;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    margin-bottom: 2rem;
+    animation: fadeInDown 1s var(--transition-smooth) forwards;
 }
 
-/* Rodapé */
-footer {
+.main-nav ul {
+    list-style: none;
     display: flex;
     justify-content: center;
-    gap: 2rem;
-    padding: 2rem;
-    background-color: #2b2b2b;
-    border-top: 1px solid #444;
+    flex-wrap: wrap;
+    gap: 1rem;
+    animation: fadeInUp 1s var(--transition-smooth) forwards;
 }
 
-footer a {
+.main-nav a {
+    color: #FFFFFF;
     text-decoration: none;
-    color: #e6e6e6;
-    transition: color 0.3s ease;
-}
-
-footer a:hover {
-    color: #ffd700;
-}
-
-/* Ajustes para dl */
-footer dl {
-    font-weight: bold;
+    font-family: var(--font-headings);
+    font-weight: 600;
     font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 50px;
+    transition: var(--transition-smooth);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Centraliza o changelog usando flexbox */
-.changelog-box-container {
-  display: flex;
-  justify-content: center; /* centraliza horizontalmente */
-  align-items: center;     /* centraliza verticalmente */
-  margin: 2rem 0;          /* espaço acima e abaixo */
+.main-nav a:hover, .main-nav a:focus-visible {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    box-shadow: var(--primary-glow);
+    transform: translateY(-3px);
 }
 
-/* Estilo para changelog */
+/* --=[ 6. Conteúdo Principal e Changelog ]=-- */
+main {
+    background-color: var(--color-surface);
+    padding: 4rem 1rem;
+}
+
+.version-info {
+    text-align: center;
+    font-family: var(--font-monospace);
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+}
+
 .changelog-box {
-  max-width: 600px;
-  color: #aaa;
-  font-size: 0.85rem;
-  text-align: left;
-  background-color: #222;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--color-background);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-medium);
 }
 
 .changelog-box h2 {
-  color: #ffd700;
-  margin-bottom: 0.5rem;
+    font-family: var(--font-headings);
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .changelog-box ul {
-  list-style: none;
-  padding-left: 0;
+    list-style: none;
 }
 
 .changelog-box li {
-  border-bottom: 1px solid #444;
-  padding: 0.4rem 0;
-  font-family: monospace, monospace;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; 
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.2s ease;
 }
 
-.changelog-box code {
-  background: #333;
-  padding: 0 0.2rem;
-  border-radius: 3px;
-  color: #ffd700;
+.changelog-box li:last-child {
+    border-bottom: none;
 }
 
-.commit-info {
-    text-align: center;
-    padding-bottom: 1rem;
+.changelog-box li:hover {
+    background-color: rgba(255, 215, 0, 0.05);
+}
+
+.commit-message {
+    color: var(--color-text);
+}
+
+.commit-date {
+    display: flex; 
+    align-items: center; 
+    color: var(--color-text-muted);
+    font-family: var(--font-monospace);
     font-size: 0.9rem;
-    color: #888;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-/* Responsivo */
-@media (max-width: 600px) {
-    footer {
+.commit-date::before {
+    content: '◆';
+    color: var(--color-primary);
+    margin-right: 0.75rem;
+    font-size: 0.8em;
+}
+
+.no-commits {
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-family: var(--font-monospace);
+}
+
+/* --=[ 7. Conteúdo Principal e Changelog ]=-- */
+main {
+    /* Cor de fundo sólida que será usada se nenhuma imagem for fornecida */
+    background-color: var(--color-surface);
+
+    /* A mágica acontece aqui:
+       1. Uma sobreposição escura para garantir a legibilidade.
+       2. A variável --main-bg-image, que receberá a URL da imagem do HTML.
+    */
+    background-image: 
+        linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)),
+        var(--main-bg-image);
+
+    /* Estilos para garantir que a imagem de fundo cubra a área corretamente */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed; /* Cria um efeito parallax suave ao rolar */
+
+    padding: 4rem 1rem;
+}
+
+
+/* --=[ 8. Responsividade ]=-- */
+@media (max-width: 768px) {
+    .changelog-box li {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .commit-date {
+        padding-left: 0;
+        width: 100%;
+        text-align: left;
     }
 }
-
