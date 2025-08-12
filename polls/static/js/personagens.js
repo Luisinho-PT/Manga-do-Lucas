@@ -9,14 +9,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const mediaList = JSON.parse(mediaDataElement.textContent);
     if (!mediaList || mediaList.length === 0) return;
 
-    // <-- ALTERAÇÃO AQUI: Carrega os dados dos balões que vêm do Django
     const balloonDataElement = document.getElementById('balloon-data');
     let speechBalloonsData = [];
     if (balloonDataElement && balloonDataElement.textContent) {
         speechBalloonsData = JSON.parse(balloonDataElement.textContent);
     }
     let availablePhrases = [...speechBalloonsData];
-    // Fim da alteração
+
+    const preloadedSounds = {};
+    function preloadBalloonSounds() {
+        speechBalloonsData.forEach(({ sound }) => {
+            if (!preloadedSounds[sound]) {
+                const audio = new Audio(sound);
+                audio.preload = 'auto';
+                preloadedSounds[sound] = audio;
+            }
+        });
+    }
+    preloadBalloonSounds();
 
     // --- 2. VARIÁVEIS DE ESTADO E ELEMENTOS DO DOM ---
     let currentIndex = 0;
@@ -24,13 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let wasPlayingBeforeScrub = false;
     let currentVolume = 1;
 
-    // Elementos do player
+    // <-- ALTERAÇÃO AQUI: Variáveis de estado para as lógicas exclusivas
+    let nessFeatureState = 0; // 0: idle, 1: som tocou, 2: balões ativados
+    const nessPsiSound = new Audio('/static/audio/ness/psi_flash.mp3'); // ATENÇÃO: Verifique se este caminho está correto
+    nessPsiSound.preload = 'auto';
+    // Fim da alteração
+
     const videoElement = document.getElementById('mainVideo');
     const sourceElement = document.getElementById('videoSource');
     const imageElement = document.getElementById('mainImage');
     const captionElement = document.getElementById('videoCaption');
 
-    // Controles
     const timeControlContainer = document.getElementById('time-control-container');
     const timeSlider = document.getElementById('timeSlider');
     const customThumb = document.getElementById('customThumb');
@@ -39,20 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const volumeButton = document.getElementById('volumeButton');
     const volumeSlider = document.getElementById('volumeSlider');
 
-    // Elementos da página 'lucas'
     const randomButtonsContainer = document.querySelector('.random-button-container');
-    // Elementos da página 'luis'
     let isBalloonFeatureActive = false;
     const balloonContainer = document.getElementById('balloon-container');
-
 
     // =================================================================
     // --- 3. FUNÇÕES PRINCIPAIS DO PLAYER ---
     // =================================================================
 
     function changeMedia(direction) {
-        cleanupBalloonFeature(); // <-- ALTERAÇÃO AQUI: Garante que os balões sumam ao trocar de mídia
-        
+        cleanupBalloonFeature(); 
+        // <-- ALTERAÇÃO AQUI: Reseta o estado da funcionalidade do Ness
+        nessFeatureState = 0;
+        // Fim da alteração
+
         currentIndex = (currentIndex + direction + mediaList.length) % mediaList.length;
         const currentMedia = mediaList[currentIndex];
 
@@ -65,16 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
             imageElement.style.display = 'block';
             timeControlContainer.style.display = 'none';
             volumeControlContainer.style.display = 'none';
-        }
-        else {
+        } else {
             imageElement.style.display = 'none';
             videoElement.style.display = 'block';
             sourceElement.src = currentMedia.src;
             timeControlContainer.style.display = 'flex';
             volumeControlContainer.style.display = 'flex';
-            
+
             videoElement.classList.toggle("small-height", !!currentMedia.small);
-            
+
             videoElement.load();
             videoElement.play().catch(error => console.log("Autoplay bloqueado.", error));
             videoElement.volume = currentVolume;
@@ -121,30 +134,18 @@ document.addEventListener('DOMContentLoaded', () => {
             timeSlider.style.background = `linear-gradient(to right, #ffd700 ${percentage}%, #555 ${percentage}%)`;
             customThumb.style.left = `${(percentage / 100) * timeSlider.offsetWidth}px`;
             timeDisplay.textContent = `${formatTime(videoElement.currentTime)} / ${formatTime(videoElement.duration)}`;
-
-            // <-- ALTERAÇÃO AQUI: Lógica de ativação e desativação dos balões
-            const nomePersonagem = document.querySelector('h1').textContent.toLowerCase();
-            const currentTime = videoElement.currentTime;
-
-            // CONDIÇÃO DE ATIVAÇÃO
-            if (nomePersonagem === 'luis' && currentIndex === 2 && currentTime >= 132 && !isBalloonFeatureActive) {
-                isBalloonFeatureActive = true;
-                createBalloon();
-            }
-
-            // CONDIÇÃO DE DESATIVAÇÃO (fim do vídeo)
-            if (isBalloonFeatureActive && videoElement.ended) {
-                cleanupBalloonFeature();
-            }
+            
+            // <-- ALTERAÇÃO AQUI: Chama o roteirizador de lógicas exclusivas
+            handleCharacterSpecificLogic();
             // Fim da alteração
         }
         requestAnimationFrame(animationLoop);
     }
 
     // =================================================================
-    // --- 5. EVENT LISTENERS (OUVINTES DE EVENTOS) ---
+    // --- 5. EVENT LISTENERS ---
     // =================================================================
-    
+
     videoElement.addEventListener('click', togglePlayPause);
     videoElement.addEventListener('loadedmetadata', initializePlayerControls);
 
@@ -167,10 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = timeSlider.getBoundingClientRect();
         let pos = (clientX - rect.left) / rect.width;
         pos = Math.max(0, Math.min(1, pos));
-        
+
         const newTime = pos * videoElement.duration;
         videoElement.currentTime = newTime;
-        
+
         const percentage = pos * 100;
         timeSlider.value = percentage;
         timeSlider.style.background = `linear-gradient(to right, #ffd700 ${percentage}%, #555 ${percentage}%)`;
@@ -207,12 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     // --- 6. LÓGICA EXCLUSIVA E INICIALIZAÇÃO ---
     // =================================================================
-    
+
     window.changeMedia = changeMedia;
 
     if (randomButtonsContainer) {
         const clickedButtons = new Set();
-        
         const randomizeButtons = () => {
             ['btn1', 'btn2', 'btn3'].forEach(id => {
                 const btn = document.getElementById(id);
@@ -223,45 +223,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.style.top = `${y}px`;
             });
         };
-
         const showFinalPopup = () => {
             const popup = document.getElementById('popupContainer');
             if (!popup) return;
             popup.style.display = 'flex';
             setTimeout(() => popup.classList.add('visible'), 10);
-            
             setTimeout(() => {
                 popup.classList.remove('visible');
                 setTimeout(() => popup.style.display = 'none', 500);
             }, 3000);
         };
-
         window.registerClick = (buttonId) => {
             const btn = document.getElementById(buttonId);
             if (btn) btn.style.display = 'none';
             clickedButtons.add(buttonId);
-            
             if (clickedButtons.size === 3) {
                 showFinalPopup();
                 clickedButtons.clear();
                 setTimeout(() => {
                     ['btn1', 'btn2', 'btn3'].forEach(id => {
                         const b = document.getElementById(id);
-                        if(b) b.style.display = 'block';
+                        if (b) b.style.display = 'block';
                     });
                     randomizeButtons();
                 }, 3500);
             }
         };
-        
         randomizeButtons();
         window.addEventListener('resize', randomizeButtons);
     }
 
     // =================================================================
-    // <-- ALTERAÇÃO AQUI: Adiciona a nova seção de funções para os balões
     // --- 7. LÓGICA DOS BALÕES (LUIS) ---
     // =================================================================
+
     function getRandomPosition() {
         const zones = [
             { top: [5, 25], left: [5, 25] },
@@ -278,46 +273,83 @@ document.addEventListener('DOMContentLoaded', () => {
     function onBalloonClick(event) {
         const balloon = event.currentTarget;
         balloon.style.pointerEvents = 'none';
-
-        const audio = new Audio(balloon.dataset.sound);
-        audio.play();
-
+        const sound = balloon.dataset.sound;
+        const audio = preloadedSounds[sound]?.cloneNode();
+        audio?.play();
         balloon.classList.add('popping');
         balloon.addEventListener('animationend', () => balloon.remove());
-
         setTimeout(createBalloon, 10000);
     }
 
     function createBalloon() {
         if (!isBalloonFeatureActive || videoElement.paused || speechBalloonsData.length === 0) return;
-
         if (availablePhrases.length === 0) {
             availablePhrases = [...speechBalloonsData];
         }
-
         const phraseIndex = Math.floor(Math.random() * availablePhrases.length);
         const phraseData = availablePhrases.splice(phraseIndex, 1)[0];
-
         const balloon = document.createElement('div');
         balloon.className = 'speech-balloon';
         balloon.textContent = phraseData.text;
         balloon.dataset.sound = phraseData.sound;
-
         const position = getRandomPosition();
         balloon.style.top = position.top;
         balloon.style.left = position.left;
-        
         balloon.addEventListener('click', onBalloonClick);
         balloonContainer.appendChild(balloon);
     }
-    
+
     function cleanupBalloonFeature() {
         isBalloonFeatureActive = false;
         if (balloonContainer) {
             balloonContainer.innerHTML = '';
         }
     }
-    // Fim da nova seção
+
+    // =================================================================
+    // --- 8. ROTEIRIZADOR DE LÓGICAS EXCLUSIVAS ---
+    // =================================================================
+    
+    function handleCharacterSpecificLogic() {
+        const nomePersonagem = document.querySelector('h1').textContent.toLowerCase();
+        switch (nomePersonagem) {
+            case 'luis':
+                handleLuisLogic();
+                break;
+            case 'ness':
+                handleNessLogic();
+                break;
+        }
+    }
+
+    function handleLuisLogic() {
+        if (currentIndex === 2 && videoElement.currentTime >= 132 && !isBalloonFeatureActive) {
+            isBalloonFeatureActive = true;
+            createBalloon();
+        }
+        if (isBalloonFeatureActive && videoElement.ended) {
+            cleanupBalloonFeature();
+        }
+    }
+
+    function handleNessLogic() {
+        if (currentIndex !== 0) return; // Apenas no primeiro vídeo
+
+        const currentTime = videoElement.currentTime;
+
+        // Estágio 0: Esperando para tocar o som
+        if (nessFeatureState === 0 && currentTime >= 25) {
+            nessPsiSound.play();
+            nessFeatureState = 1; // Avança para o próximo estágio
+        }
+
+        // Estágio 1: Esperando para ativar os balões
+        if (nessFeatureState === 1 && currentTime >= 30) {
+            isBalloonFeatureActive = true;
+            createBalloon();
+            nessFeatureState = 2; // Avança para o estágio final (funcionalidade concluída)
+        }
+    }
 
     // --- INICIALIZAÇÃO DO PLAYER ---
     changeMedia(0);

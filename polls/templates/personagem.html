@@ -11,6 +11,8 @@
 <body>
     <h1>{{ nome_personagem|upper }}</h1>
 
+    <h1>     </h1>
+
     {% if media_list %}
         <div class="video-container">
             <h2 id="videoCaption" class="video-caption"></h2>
@@ -47,7 +49,7 @@
             </div>
         {% endif %}
 
-        {% if nome_personagem == 'luis' %}
+        {% if nome_personagem == 'luis' or nome_personagem == 'ness' %}
             <div id="balloon-container"></div>
         {% endif %}
 
