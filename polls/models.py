@@ -20,7 +20,7 @@ class Changelog(models.Model):
     commit_hash = models.CharField(max_length=40, unique=True)
     message = models.TextField()
     date = models.DateTimeField()
-    exibir = models.BooleanField(default=True)  # ✅ Adicione esta linha
+    exibir = models.BooleanField(default=True) 
 
     def __str__(self):
         return self.message

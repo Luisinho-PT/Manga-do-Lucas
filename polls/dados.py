@@ -12,7 +12,7 @@ dados = {
             {'type': 'video', 'src': '/static/img/lucas/lucas_video.mp4', 'caption': 'Arco de treinamento do Lucas'},
             {'type': 'video', 'src': '/static/img/lucas/lucas_video2.mp4', 'caption': 'Dirigindo meu Bergentruck'}
         ],
-        'balloon_data': []  # Lucas não tem balões, então a lista é vazia
+        'balloon_data': [] 
     },
     'luis': {
         'media_list': [
