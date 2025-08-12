@@ -39,7 +39,7 @@ DEBUG = os.environ.get("DEBUG")
 if DEBUG is None:
     DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1','.onrender.com','.vercel.app']
 
 # GITHUB_TOKEN: # Token para acessar a API do GitHub
 # Certifique-se de que o token tenha permissões para acessar o repositório

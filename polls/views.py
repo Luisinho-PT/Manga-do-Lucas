@@ -1,6 +1,5 @@
 import os 
 import requests
-
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.core.cache import cache
