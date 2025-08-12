@@ -98,7 +98,3 @@ Para o funcionamento completo do projeto, as seguintes variáveis de ambiente s�
 * **`DB_HOST`**: O host do banco de dados, encontrado nas configurações do seu projeto Supabase (em `Project Settings > Database > Connection string`).
 * **`DB_PORT`**: A porta do banco de dados (geralmente `5432`).
 
-
----
-
-Criado e desenvolvido por **Luís (Luquinhas)**.
