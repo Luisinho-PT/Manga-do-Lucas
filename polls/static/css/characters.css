@@ -164,3 +164,7 @@ body {
     background-color: var(--color-primary); color: var(--color-background);
     box-shadow: var(--primary-glow); transform: translateY(-3px);
 }
+
+.mai {
+    align-self: start;
+}
