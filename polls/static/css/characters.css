@@ -1,70 +1,166 @@
+/*
+ * =================================================================
+ * CSS COMPLETO E FINALIZADO - PÁGINA DE PERSONAGENS
+ * Layout: Cards com tamanho fixo e distribuídos nas laterais.
+ * Efeitos: Fundo Parallax, Título Animado, Cards 3D com Animações Variadas
+ * =================================================================
+ */
+
+/* --=[ 1. Variáveis Globais (Design System) ]=-- */
+:root {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-primary: #ffd700;
+    --color-primary-light: #fff8e1;
+    --color-text: #e0e0e0;
+    --color-text-headings: #ffffff;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --bg-image: none; /* Definido dinamicamente no HTML */
+    --font-headings: 'Poppins', sans-serif;
+    --font-body: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --primary-glow: 0 0 20px rgba(255, 215, 0, 0.7);
+    --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --=[ 2. Reset e Estilos Base ]=-- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
-    background-color: #1a1a1a;
-    color: #f0f0f0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-background);
+    background-image: linear-gradient(rgba(18, 18, 18, 0.92), rgba(18, 18, 18, 0.92)), var(--bg-image);
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: 1.6;
     padding: 2rem;
-    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.title {
+/* --=[ 3. Animações Globais ]=-- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px) rotateX(-5deg); }
+    to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+@keyframes shimmer {
+    from { background-position: 200% center; }
+    to { background-position: -200% center; }
+}
+
+/* --=[ 4. Layout Principal e Título ]=-- */
+.page-container {
+    max-width: 1100px; 
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.page-title {
     text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #ffd700;
+    font-family: var(--font-headings);
+    font-size: clamp(3rem, 6vw, 4rem);
+    color: transparent;
+    background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary), var(--color-primary-light), var(--color-primary));
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeInUp 1s ease-out, shimmer 4s linear infinite;
 }
 
+/* --=[ 5. Grid de Personagens ]=-- */
 .character-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    padding: 0 2rem;
+    /* Para mobile, mantemos a coluna única centralizada */
+    grid-template-columns: minmax(0, 350px); 
+    justify-content: center;
+    gap: 2.5rem;
+    animation: fadeInUp 1s ease-out 0.3s;
+    animation-fill-mode: backwards;
+    perspective: 1500px;
+}
+/* ✅ AJUSTE PRINCIPAL AQUI */
+@media (min-width: 768px) {
+    .character-grid { 
+        /* Mantém o tamanho máximo dos cards */
+        grid-template-columns: repeat(2, minmax(0, 300px)); 
+        /* A MÁGICA: distribui o espaço e empurra os cards para as bordas */
+        justify-content: space-between; 
+        gap: 2rem; /* Gap menor, pois o space-between já cria espaço */
+    }
 }
 
+/* --=[ 6. Card de Personagem ]=-- */
 .character-card {
-    text-align: center;
-}
-
-.character-card p {
-    margin-top: 0.8rem;
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: #fff;
+    display: block;
+    text-decoration: none;
+    background-color: var(--color-surface);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-medium);
+    transition: var(--transition-smooth);
+    transform-style: preserve-3d;
+    aspect-ratio: 1 / 1; 
 }
 
 .character-card img {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid #444;
-    transition: 0.3s ease;
-    box-shadow: 0 0 10px transparent;  /* sombra invisível no início */
-}
-
-/* Quando passar o mouse */
-.character-card img:hover {
-    filter: brightness(0.85); /* escurece um pouco */
-    cursor: pointer;
-    box-shadow: 0 0 15px #ffd70044; /* sombra leve dourada */
-}
-
-.return {
+    width: 100%;
+    height: 100%; 
+    object-fit: cover; 
     display: block;
-    margin: auto auto 0; /* margem superior 20px, esquerda/direita auto para centralizar */
-    height: 30px;
-    width: 220px;
-    line-height: 30px;
-    text-decoration: none;
-    color: #ffd700;
-    font-weight: bold;
-    padding: 10px 20px;
-    background-color: #444;
-    border-radius: 6px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    text-align: center;
+    transition: 0.2s ease-out;
 }
 
-.return:hover {
-    background-color: #ffd700;
-    color: #1a1a1a;
+.character-card p {
+    font-family: var(--font-headings);
+    font-weight: 600;
+    font-size: clamp(0.9rem, 5vw, 1.2rem);
+    color: var(--color-text-headings);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2.5rem 1rem 1.5rem 1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 30%, transparent);
+    transition: var(--transition-smooth);
+    transform: translateZ(20px);
+}
+
+/* EFEITOS DE HOVER E BRILHO */
+.character-card:hover { box-shadow: var(--primary-glow); }
+.character-card:hover img { filter: brightness(0.8); }
+.character-card:nth-child(odd):hover { transform: translateY(-10px) rotateY(10deg) rotateX(5deg) scale(1.05); }
+.character-card:nth-child(even):hover { transform: translateY(-10px) rotateY(-10deg) rotateX(5deg) scale(1.05); }
+
+.character-card:nth-child(odd)::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 80%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    transform: skewX(-25deg); transition: left 0.8s cubic-bezier(0.23, 1, 0.32, 1); z-index: 1;
+}
+.character-card:nth-child(odd):hover::before { left: 100%; }
+
+.character-card:nth-child(even)::before {
+    content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 80%;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: skewY(-25deg); transition: top 0.8s cubic-bezier(0.23, 1, 0.32, 1); z-index: 1;
+}
+.character-card:nth-child(even):hover::before { top: 100%; }
+
+/* --=[ 7. Botão de Retorno ]=-- */
+.return-button {
+    display: block; margin: 2rem auto 0; width: fit-content; padding: 0.8rem 2rem;
+    text-decoration: none; text-align: center; font-family: var(--font-headings);
+    font-weight: 600; font-size: 1rem; color: var(--color-primary);
+    background-color: var(--color-surface); border: 2px solid var(--color-primary);
+    border-radius: 50px; transition: var(--transition-smooth); position: relative; z-index: 10;
+}
+.return-button:hover, .return-button:focus-visible {
+    background-color: var(--color-primary); color: var(--color-background);
+    box-shadow: var(--primary-glow); transform: translateY(-3px);
 }

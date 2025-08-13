@@ -5,28 +5,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="{% static 'css/characters.css' %}">
+    <style>
+        :root {
+            /* A URL da view é inserida aqui pelo Django */
+            --bg-image: url('{{ background_image_url }}');
+        }
+    </style>
     <title>Personagens</title>
 </head>
 <body>
-    <h1 class="title">Personagens</h1>
     
-    <div class="character-grid">
-        
-        {% for nome in personagens %}
-        <div class="character-card">
-            <a href="{% url 'pagina_personagem' nome %}">
-                <img src="{% static 'img/'|add:nome|add:'/'|add:nome|add:'.png' %}" alt="{{ nome|title }}">
-            </a>
-            <p>{{ nome|title }}</p>
-        </div>
-        {% endfor %}
-        
-    </div>
+    <main class="page-container">
 
-    <div>
-        <p><a class="return" href="{% url 'main_page' %}">Voltar para a Página Inicial</a></p>
-    </div>
+        <h1 class="page-title">Personagens</h1>
+        
+        <div class="character-grid">
+            
+            {% for nome in personagens %}
+            <a href="{% url 'pagina_personagem' nome %}" class="character-card">
+                <img src="{% static 'img/'|add:nome|add:'/'|add:nome|add:'.png' %}" alt="{{ nome|title }}">
+                <p>{{ nome|title }}</p>
+            </a>
+            {% endfor %}
+            
+        </div>
+
+        <a class="return-button" href="{% url 'main_page' %}">Voltar para a Página Inicial</a>
+
+    </main>
+
     <script src="{% static 'js/no_chr/ordenar_personagem.js'%}"></script>
-    </body>
+</body>
 </html>

@@ -94,9 +94,10 @@ def history(request):
 
 def characters(request):
     nomes_dos_personagens = list(dados.keys())
-    context = {'personagens': nomes_dos_personagens}
+    context = {'personagens': nomes_dos_personagens,
+               "background_image_url": '/static/img/background2.png'
+    }
     return render(request, 'characters.html', context)
-
 
 def chapters(request):
     return render(request, 'chapters.html')
