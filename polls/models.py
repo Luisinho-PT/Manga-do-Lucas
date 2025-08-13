@@ -33,5 +33,3 @@ class VersaoSistema(models.Model):
 
     def __str__(self):
         return f"Versão {self.numero}"
-    
-
