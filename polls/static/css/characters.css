@@ -2,7 +2,7 @@
  * =================================================================
  * CSS COMPLETO E FINALIZADO - PÁGINA DE PERSONAGENS
  * Layout: Cards com tamanho fixo e distribuídos nas laterais.
- * Efeitos: Fundo Parallax, Título Animado, Cards 3D com Animações Variadas
+ * Efeitos: Fundo com Scroll, Título Animado, Cards 3D com Animações Variadas
  * =================================================================
  */
 
@@ -29,9 +29,12 @@
 body {
     background-color: var(--color-background);
     background-image: linear-gradient(rgba(18, 18, 18, 0.92), rgba(18, 18, 18, 0.92)), var(--bg-image);
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    
+    /* ✅ MUDANÇA PRINCIPAL AQUI */
+    background-attachment: scroll; /* Faz a imagem rolar com a página */
+
     color: var(--color-text);
     font-family: var(--font-body);
     line-height: 1.6;
@@ -75,7 +78,6 @@ body {
 /* --=[ 5. Grid de Personagens ]=-- */
 .character-grid {
     display: grid;
-    /* Para mobile, mantemos a coluna única centralizada */
     grid-template-columns: minmax(0, 350px); 
     justify-content: center;
     gap: 2.5rem;
@@ -83,14 +85,11 @@ body {
     animation-fill-mode: backwards;
     perspective: 1500px;
 }
-/* ✅ AJUSTE PRINCIPAL AQUI */
 @media (min-width: 768px) {
     .character-grid { 
-        /* Mantém o tamanho máximo dos cards */
         grid-template-columns: repeat(2, minmax(0, 300px)); 
-        /* A MÁGICA: distribui o espaço e empurra os cards para as bordas */
         justify-content: space-between; 
-        gap: 2rem; /* Gap menor, pois o space-between já cria espaço */
+        gap: 2rem;
     }
 }
 
@@ -132,7 +131,6 @@ body {
     transform: translateZ(20px);
 }
 
-/* EFEITOS DE HOVER E BRILHO */
 .character-card:hover { box-shadow: var(--primary-glow); }
 .character-card:hover img { filter: brightness(0.8); }
 .character-card:nth-child(odd):hover { transform: translateY(-10px) rotateY(10deg) rotateX(5deg) scale(1.05); }

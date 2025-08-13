@@ -16,3 +16,5 @@ class CommentForm(forms.ModelForm):
                 'class': 'form-textarea'
             }),
         }
+
+    
