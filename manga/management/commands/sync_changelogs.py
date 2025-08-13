@@ -65,6 +65,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"  - Adicionado: {clean_message.splitlines()[0][:60]}"))
             novos_commits += 1
 
+
         self.stdout.write(self.style.SUCCESS(f"\nSincronização concluída!"))
         self.stdout.write(f"  - Commits novos adicionados: {novos_commits}")
         self.stdout.write(f"  - Commits já existentes ignorados: {commits_ignorados_ja_existem}")
