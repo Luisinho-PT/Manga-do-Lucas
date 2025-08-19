@@ -154,3 +154,4 @@ def sync_changelogs_view(request):
         return JsonResponse({"status": "ok", "message": "Changelogs sincronizados"})
     else:
         return HttpResponseForbidden("Token inválido")
+    
