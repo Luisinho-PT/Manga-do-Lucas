@@ -1,104 +1,84 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. LEITURA DOS DADOS E ELEMENTOS ---
-    const mediaDataElement = document.getElementById('media-data');
-    if (!mediaDataElement) {
-        console.error("Elemento 'media-data' não foi encontrado.");
-        return;
-    }
-    const mediaList = JSON.parse(mediaDataElement.textContent);
-    if (!mediaList || mediaList.length === 0) return;
+    // =========================================================================
+    // [1] SETUP INICIAL: Leitura de dados e seleção de elementos do DOM
+    // =========================================================================
 
-    const balloonDataElement = document.getElementById('balloon-data');
-    let speechBalloonsData = [];
-    if (balloonDataElement && balloonDataElement.textContent) {
-        speechBalloonsData = JSON.parse(balloonDataElement.textContent);
-    }
-    let availablePhrases = [...speechBalloonsData];
+    const sheet = document.querySelector('.character-sheet');
+    if (!sheet) return;
 
-    const preloadedSounds = {};
-    function preloadBalloonSounds() {
-        speechBalloonsData.forEach(({ sound }) => {
-            if (!preloadedSounds[sound]) {
-                const audio = new Audio(sound);
-                audio.preload = 'auto';
-                preloadedSounds[sound] = audio;
-            }
-        });
-    }
-    preloadBalloonSounds();
+    const characterName = sheet.dataset.characterName;
+    const mediaList = JSON.parse(document.getElementById('media-data')?.textContent || '[]');
+    const speechBalloonsData = JSON.parse(document.getElementById('balloon-data')?.textContent || '[]');
 
-    // --- 2. VARIÁVEIS DE ESTADO E ELEMENTOS DO DOM ---
-    let currentIndex = 0;
-    let isScrubbing = false;
-    let wasPlayingBeforeScrub = false;
-    let currentVolume = 1;
+    if (mediaList.length === 0) return;
 
-    // <-- ALTERAÇÃO AQUI: Variáveis de estado para as lógicas exclusivas
-    let nessFeatureState = 0; // 0: idle, 1: som tocou, 2: balões ativados
-    const nessPsiSound = new Audio('/static/audio/ness/psi_flash.mp3'); // ATENÇÃO: Verifique se este caminho está correto
-    nessPsiSound.preload = 'auto';
-    // Fim da alteração
+    const DOM = {
+        video: document.getElementById('mainVideo'),
+        videoSource: document.getElementById('videoSource'),
+        image: document.getElementById('mainImage'),
+        figure: document.querySelector('.media-player__figure'),
+        caption: document.getElementById('mediaCaption'),
+        prevButton: document.getElementById('prevButton'),
+        nextButton: document.getElementById('nextButton'),
+        timeControl: document.getElementById('time-control-container'),
+        timeSlider: document.getElementById('timeSlider'),
+        timeSliderWrapper: document.querySelector('.time-slider-wrapper'),
+        customThumb: document.getElementById('customThumb'),
+        timeTooltip: document.querySelector('.time-tooltip'),
+        timeDisplay: document.getElementById('timeDisplay'),
+        volumeControl: document.querySelector('.media-player__volume-control'),
+        volumeButton: document.getElementById('volumeButton'),
+        volumeSlider: document.getElementById('volumeSlider'),
+        lucasInteraction: {
+            container: document.getElementById('random-button-container'),
+            buttons: document.querySelectorAll('.interactive-button'),
+            popup: document.getElementById('popupContainer'),
+        },
+        balloonContainer: document.getElementById('balloon-container'),
+    };
 
-    const videoElement = document.getElementById('mainVideo');
-    const sourceElement = document.getElementById('videoSource');
-    const imageElement = document.getElementById('mainImage');
-    const captionElement = document.getElementById('videoCaption');
+    // =========================================================================
+    // [2] ESTADO DA APLICAÇÃO
+    // =========================================================================
 
-    const timeControlContainer = document.getElementById('time-control-container');
-    const timeSlider = document.getElementById('timeSlider');
-    const customThumb = document.getElementById('customThumb');
-    const timeDisplay = document.getElementById('timeDisplay');
-    const volumeControlContainer = document.querySelector('.volume-control-container');
-    const volumeButton = document.getElementById('volumeButton');
-    const volumeSlider = document.getElementById('volumeSlider');
+    const State = {
+        currentIndex: 0,
+        isScrubbing: false,
+        currentVolume: 1,
+        isBalloonFeatureActive: false,
+        preloadedSounds: {},
+        availablePhrases: [...speechBalloonsData],
+        ness: { stage: 0, sound: new Audio('/static/audio/ness/psi_flash.mp3') },
+        lucas: { clickedButtons: new Set() },
+    };
 
-    const randomButtonsContainer = document.querySelector('.random-button-container');
-    let isBalloonFeatureActive = false;
-    const balloonContainer = document.getElementById('balloon-container');
+    // =========================================================================
+    // [3] FUNÇÕES PRINCIPAIS DO PLAYER
+    // =========================================================================
 
-    // =================================================================
-    // --- 3. FUNÇÕES PRINCIPAIS DO PLAYER ---
-    // =================================================================
-
-    function changeMedia(direction) {
-        cleanupBalloonFeature(); 
-        // <-- ALTERAÇÃO AQUI: Reseta o estado da funcionalidade do Ness
-        nessFeatureState = 0;
-        // Fim da alteração
-
-        currentIndex = (currentIndex + direction + mediaList.length) % mediaList.length;
-        const currentMedia = mediaList[currentIndex];
-
-        captionElement.textContent = currentMedia.caption || '';
+    function setMedia() {
+        cleanupCharacterFeatures();
+        const currentMedia = mediaList[State.currentIndex];
+        DOM.caption.textContent = currentMedia.caption || '';
 
         if (currentMedia.type === 'image') {
-            videoElement.style.display = 'none';
-            videoElement.pause();
-            imageElement.src = currentMedia.src;
-            imageElement.style.display = 'block';
-            timeControlContainer.style.display = 'none';
-            volumeControlContainer.style.display = 'none';
+            DOM.figure.classList.add('is-image');
+            DOM.figure.classList.remove('is-video');
+            DOM.video.classList.remove('active');
+            DOM.video.pause();
+            DOM.image.src = currentMedia.src;
+            DOM.image.alt = currentMedia.caption || `Imagem de ${characterName}`;
+            DOM.image.classList.add('active');
         } else {
-            imageElement.style.display = 'none';
-            videoElement.style.display = 'block';
-            sourceElement.src = currentMedia.src;
-            timeControlContainer.style.display = 'flex';
-            volumeControlContainer.style.display = 'flex';
-
-            videoElement.classList.toggle("small-height", !!currentMedia.small);
-
-            videoElement.load();
-            videoElement.play().catch(error => console.log("Autoplay bloqueado.", error));
-            videoElement.volume = currentVolume;
-            videoElement.muted = (currentVolume === 0);
-            videoElement.loop = true;
+            DOM.figure.classList.add('is-video');
+            DOM.figure.classList.remove('is-image');
+            DOM.image.classList.remove('active');
+            DOM.videoSource.src = currentMedia.src;
+            DOM.video.load();
+            DOM.video.play().catch(error => console.warn("Autoplay bloqueado.", error));
+            DOM.video.classList.add('active');
         }
-    }
-
-    function togglePlayPause() {
-        if (videoElement.paused) videoElement.play();
-        else videoElement.pause();
     }
 
     function formatTime(seconds) {
@@ -107,187 +87,135 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
 
-    // =================================================================
-    // --- 4. FUNÇÕES DE ATUALIZAÇÃO DA INTERFACE (UI) ---
-    // =================================================================
-
+    // =========================================================================
+    // [4] ATUALIZAÇÕES DE INTERFACE (UI)
+    // =========================================================================
+    
     function updateVolumeIcon() {
-        volumeButton.innerHTML = (videoElement.muted || videoElement.volume === 0) ? '&#128264;' : '&#128266;';
+        const isMuted = DOM.video.muted || DOM.video.volume === 0;
+        DOM.volumeButton.classList.toggle('is-muted', isMuted);
     }
-
-    function updateVolumeSliderBackground() {
-        volumeSlider.style.background = `linear-gradient(to right, #ffd700 ${volumeSlider.value}%, #555 ${volumeSlider.value}%)`;
-    }
-
-    function initializePlayerControls() {
-        if (!videoElement.duration || isNaN(videoElement.duration)) return;
-        timeDisplay.textContent = `00:00 / ${formatTime(videoElement.duration)}`;
-        volumeSlider.value = currentVolume * 100;
-        updateVolumeSliderBackground();
-        updateVolumeIcon();
+    
+    function updateSliderProgress(slider) {
+        const percentage = (slider.value / slider.max) * 100;
+        slider.style.setProperty('--progress', `${percentage}%`);
     }
 
     function animationLoop() {
-        if (!isScrubbing && !videoElement.paused) {
-            const percentage = (videoElement.currentTime / videoElement.duration) * 100;
-            timeSlider.value = percentage;
-            timeSlider.style.background = `linear-gradient(to right, #ffd700 ${percentage}%, #555 ${percentage}%)`;
-            customThumb.style.left = `${(percentage / 100) * timeSlider.offsetWidth}px`;
-            timeDisplay.textContent = `${formatTime(videoElement.currentTime)} / ${formatTime(videoElement.duration)}`;
+        if (!State.isScrubbing && DOM.video.duration) {
+            const percentage = (DOM.video.currentTime / DOM.video.duration) * 100;
+            DOM.timeSlider.value = percentage;
+            updateSliderProgress(DOM.timeSlider);
             
-            // <-- ALTERAÇÃO AQUI: Chama o roteirizador de lógicas exclusivas
+            const thumbPosition = (percentage / 100) * DOM.timeSlider.offsetWidth;
+            DOM.customThumb.style.left = `${thumbPosition}px`;
+
+            DOM.timeDisplay.textContent = `${formatTime(DOM.video.currentTime)} / ${formatTime(DOM.video.duration)}`;
             handleCharacterSpecificLogic();
-            // Fim da alteração
         }
         requestAnimationFrame(animationLoop);
     }
 
-    // =================================================================
-    // --- 5. EVENT LISTENERS ---
-    // =================================================================
-
-    videoElement.addEventListener('click', togglePlayPause);
-    videoElement.addEventListener('loadedmetadata', initializePlayerControls);
-
-    function startScrubbing(e) {
-        isScrubbing = true;
-        wasPlayingBeforeScrub = !videoElement.paused;
-        videoElement.pause();
-        scrub(e);
-    }
-
-    function stopScrubbing() {
-        if (!isScrubbing) return;
-        isScrubbing = false;
-        if (wasPlayingBeforeScrub) videoElement.play();
-    }
-
-    function scrub(e) {
-        if (!isScrubbing) return;
+    function updateTooltip(e) {
+        if (!DOM.video.duration) return;
+        const rect = DOM.timeSlider.getBoundingClientRect();
         const clientX = e.clientX || e.touches[0].clientX;
-        const rect = timeSlider.getBoundingClientRect();
         let pos = (clientX - rect.left) / rect.width;
         pos = Math.max(0, Math.min(1, pos));
-
-        const newTime = pos * videoElement.duration;
-        videoElement.currentTime = newTime;
-
-        const percentage = pos * 100;
-        timeSlider.value = percentage;
-        timeSlider.style.background = `linear-gradient(to right, #ffd700 ${percentage}%, #555 ${percentage}%)`;
-        customThumb.style.left = `${pos * timeSlider.offsetWidth}px`;
-        timeDisplay.textContent = `${formatTime(newTime)} / ${formatTime(videoElement.duration)}`;
+        const hoverTime = pos * DOM.video.duration;
+        DOM.timeTooltip.textContent = formatTime(hoverTime);
+        const tooltipWidth = DOM.timeTooltip.offsetWidth;
+        const thumbPosition = pos * rect.width;
+        let tooltipLeft = thumbPosition - (tooltipWidth / 2);
+        if (tooltipLeft < 0) tooltipLeft = 0;
+        if (tooltipLeft + tooltipWidth > rect.width) {
+            tooltipLeft = rect.width - tooltipWidth;
+        }
+        DOM.timeTooltip.style.left = `${tooltipLeft}px`;
     }
 
-    timeSlider.addEventListener('mousedown', startScrubbing);
-    document.addEventListener('mousemove', scrub);
-    document.addEventListener('mouseup', stopScrubbing);
-    timeSlider.addEventListener('touchstart', startScrubbing);
-    document.addEventListener('touchmove', scrub);
-    document.addEventListener('touchend', stopScrubbing);
+    // =========================================================================
+    // [5] EVENT HANDLERS
+    // =========================================================================
 
-    volumeButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        volumeSlider.classList.toggle('visible');
-    });
+    function handleMediaChange(direction) {
+        State.currentIndex = (State.currentIndex + direction + mediaList.length) % mediaList.length;
+        setMedia();
+    }
 
-    document.addEventListener('click', (e) => {
-        if (!volumeControlContainer.contains(e.target)) {
-            volumeSlider.classList.remove('visible');
-        }
-    });
+    function handleTogglePlayPause() {
+        if (DOM.video.paused) DOM.video.play();
+        else DOM.video.pause();
+    }
 
-    volumeSlider.addEventListener('input', (e) => {
-        currentVolume = e.target.value / 100;
-        videoElement.volume = currentVolume;
-        videoElement.muted = (currentVolume === 0);
+    function handleVolumeChange(e) {
+        State.currentVolume = e.target.value / 100;
+        DOM.video.volume = State.currentVolume;
+        DOM.video.muted = State.currentVolume === 0;
         updateVolumeIcon();
-        updateVolumeSliderBackground();
-    });
-
-    // =================================================================
-    // --- 6. LÓGICA EXCLUSIVA E INICIALIZAÇÃO ---
-    // =================================================================
-
-    window.changeMedia = changeMedia;
-
-    if (randomButtonsContainer) {
-        const clickedButtons = new Set();
-        const randomizeButtons = () => {
-            ['btn1', 'btn2', 'btn3'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (!btn) return;
-                const x = Math.random() * (randomButtonsContainer.clientWidth - 30);
-                const y = Math.random() * (randomButtonsContainer.clientHeight - 30);
-                btn.style.left = `${x}px`;
-                btn.style.top = `${y}px`;
-            });
-        };
-        const showFinalPopup = () => {
-            const popup = document.getElementById('popupContainer');
-            if (!popup) return;
-            popup.style.display = 'flex';
-            setTimeout(() => popup.classList.add('visible'), 10);
-            setTimeout(() => {
-                popup.classList.remove('visible');
-                setTimeout(() => popup.style.display = 'none', 500);
-            }, 3000);
-        };
-        window.registerClick = (buttonId) => {
-            const btn = document.getElementById(buttonId);
-            if (btn) btn.style.display = 'none';
-            clickedButtons.add(buttonId);
-            if (clickedButtons.size === 3) {
-                showFinalPopup();
-                clickedButtons.clear();
-                setTimeout(() => {
-                    ['btn1', 'btn2', 'btn3'].forEach(id => {
-                        const b = document.getElementById(id);
-                        if (b) b.style.display = 'block';
-                    });
-                    randomizeButtons();
-                }, 3500);
-            }
-        };
-        randomizeButtons();
-        window.addEventListener('resize', randomizeButtons);
+        updateSliderProgress(DOM.volumeSlider);
     }
 
-    // =================================================================
-    // --- 7. LÓGICA DOS BALÕES (LUIS) ---
-    // =================================================================
-
-    function getRandomPosition() {
-        const zones = [
-            { top: [5, 25], left: [5, 25] },
-            { top: [5, 25], left: [75, 95] },
-            { top: [65, 85], left: [5, 25] },
-            { top: [65, 85], left: [75, 95] }
-        ];
-        const randomZone = zones[Math.floor(Math.random() * zones.length)];
-        const top = Math.random() * (randomZone.top[1] - randomZone.top[0]) + randomZone.top[0];
-        const left = Math.random() * (randomZone.left[1] - randomZone.left[0]) + randomZone.left[0];
-        return { top: `${top}vh`, left: `${left}vw` };
+    function handleScrub(e) {
+        if (!State.isScrubbing) return;
+        const rect = DOM.timeSlider.getBoundingClientRect();
+        const clientX = e.clientX || e.touches[0].clientX;
+        let pos = (clientX - rect.left) / rect.width;
+        pos = Math.max(0, Math.min(1, pos));
+        DOM.video.currentTime = pos * DOM.video.duration;
+        updateSliderProgress(DOM.timeSlider);
+        const thumbPosition = pos * DOM.timeSlider.offsetWidth;
+        DOM.customThumb.style.left = `${thumbPosition}px`;
+        updateTooltip(e);
     }
+    
+    // =========================================================================
+    // [6] LÓGICAS ESPECÍFICAS DE PERSONAGENS
+    // =========================================================================
 
-    function onBalloonClick(event) {
-        const balloon = event.currentTarget;
-        balloon.style.pointerEvents = 'none';
-        const sound = balloon.dataset.sound;
-        const audio = preloadedSounds[sound]?.cloneNode();
-        audio?.play();
-        balloon.classList.add('popping');
-        balloon.addEventListener('animationend', () => balloon.remove());
-        setTimeout(createBalloon, 10000);
-    }
-
-    function createBalloon() {
-        if (!isBalloonFeatureActive || videoElement.paused || speechBalloonsData.length === 0) return;
-        if (availablePhrases.length === 0) {
-            availablePhrases = [...speechBalloonsData];
+    function cleanupCharacterFeatures() {
+        State.isBalloonFeatureActive = false;
+        if (DOM.balloonContainer) DOM.balloonContainer.innerHTML = '';
+        State.ness.stage = 0;
+        if (characterName === 'lucas') {
+            State.lucas.clickedButtons.clear();
+            DOM.lucasInteraction.buttons.forEach(btn => btn.style.display = 'block');
+            randomizeLucasButtons();
         }
-        const phraseIndex = Math.floor(Math.random() * availablePhrases.length);
-        const phraseData = availablePhrases.splice(phraseIndex, 1)[0];
+    }
+
+    function handleCharacterSpecificLogic() {
+        if (DOM.video.paused) return;
+        switch (characterName) {
+            case 'luis':
+                if (State.currentIndex === 2 && DOM.video.currentTime >= 132 && !State.isBalloonFeatureActive) {
+                    State.isBalloonFeatureActive = true;
+                    createBalloon();
+                }
+                break;
+            case 'ness':
+                if (State.currentIndex !== 0) return;
+                const currentTime = DOM.video.currentTime;
+                if (State.ness.stage === 0 && currentTime >= 25) {
+                    State.ness.sound.play();
+                    State.ness.stage = 1;
+                }
+                if (State.ness.stage === 1 && currentTime >= 30) {
+                    State.isBalloonFeatureActive = true;
+                    createBalloon();
+                    State.ness.stage = 2;
+                }
+                break;
+        }
+    }
+    
+    function createBalloon() {
+        if (!State.isBalloonFeatureActive || DOM.video.paused || speechBalloonsData.length === 0) return;
+        if (State.availablePhrases.length === 0) {
+            State.availablePhrases = [...speechBalloonsData];
+        }
+        const phraseIndex = Math.floor(Math.random() * State.availablePhrases.length);
+        const phraseData = State.availablePhrases.splice(phraseIndex, 1)[0];
         const balloon = document.createElement('div');
         balloon.className = 'speech-balloon';
         balloon.textContent = phraseData.text;
@@ -296,62 +224,147 @@ document.addEventListener('DOMContentLoaded', () => {
         balloon.style.top = position.top;
         balloon.style.left = position.left;
         balloon.addEventListener('click', onBalloonClick);
-        balloonContainer.appendChild(balloon);
+        DOM.balloonContainer.appendChild(balloon);
     }
 
-    function cleanupBalloonFeature() {
-        isBalloonFeatureActive = false;
-        if (balloonContainer) {
-            balloonContainer.innerHTML = '';
+    function onBalloonClick(event) {
+        const balloon = event.currentTarget;
+        balloon.style.pointerEvents = 'none';
+        const soundPath = balloon.dataset.sound;
+        if (soundPath && State.preloadedSounds[soundPath]) {
+            const audio = State.preloadedSounds[soundPath].cloneNode();
+            audio.play();
+        }
+        balloon.classList.add('popping');
+        balloon.addEventListener('animationend', () => balloon.remove());
+        setTimeout(createBalloon, 8000 + Math.random() * 4000);
+    }
+
+    function getRandomPosition() {
+        const margin = 10, variation = 20;
+        const zones = [
+            { top: [margin, margin + variation], left: [margin, margin + variation] },
+            { top: [margin, margin + variation], left: [100 - margin - variation, 100 - margin] },
+            { top: [100 - margin - variation, 100 - margin], left: [margin, margin + variation] },
+            { top: [100 - margin - variation, 100 - margin], left: [100 - margin - variation, 100 - margin] }
+        ];
+        const randomZone = zones[Math.floor(Math.random() * zones.length)];
+        const top = Math.random() * (randomZone.top[1] - randomZone.top[0]) + randomZone.top[0];
+        const left = Math.random() * (randomZone.left[1] - randomZone.left[0]) + randomZone.left[0];
+        return { top: `${top}vh`, left: `${left}vw` };
+    }
+
+    function randomizeLucasButtons() {
+        if (!DOM.lucasInteraction.container) return;
+        DOM.lucasInteraction.buttons.forEach(btn => {
+            const container = DOM.lucasInteraction.container;
+            const x = Math.random() * (container.clientWidth - 30);
+            const y = Math.random() * (container.clientHeight - 30);
+            btn.style.left = `${x}px`;
+            btn.style.top = `${y}px`;
+        });
+    }
+
+    function handleLucasButtonClick(button) {
+        button.style.display = 'none';
+        State.lucas.clickedButtons.add(button.id);
+        if (State.lucas.clickedButtons.size === 3) {
+            DOM.lucasInteraction.popup.classList.add('visible');
+            setTimeout(() => {
+                DOM.lucasInteraction.popup.classList.remove('visible');
+                cleanupCharacterFeatures();
+            }, 3000);
         }
     }
 
-    // =================================================================
-    // --- 8. ROTEIRIZADOR DE LÓGICAS EXCLUSIVAS ---
-    // =================================================================
-    
-    function handleCharacterSpecificLogic() {
-        const nomePersonagem = document.querySelector('h1').textContent.toLowerCase();
-        switch (nomePersonagem) {
-            case 'luis':
-                handleLuisLogic();
-                break;
-            case 'ness':
-                handleNessLogic();
-                break;
+    // =========================================================================
+    // [7] INICIALIZAÇÃO E BIND DE EVENTOS
+    // =========================================================================
+
+    function initialize() {
+        speechBalloonsData.forEach(({ sound }) => {
+            if (sound && !State.preloadedSounds[sound]) {
+                 State.preloadedSounds[sound] = new Audio(sound);
+            }
+        });
+        if (characterName === 'ness') {
+            State.ness.sound.preload = 'auto';
         }
+
+        DOM.prevButton.addEventListener('click', () => handleMediaChange(-1));
+        DOM.nextButton.addEventListener('click', () => handleMediaChange(1));
+        DOM.video.addEventListener('click', handleTogglePlayPause);
+        DOM.volumeSlider.addEventListener('input', handleVolumeChange);
+        
+        DOM.volumeButton.addEventListener('click', () => {
+            DOM.video.muted = !DOM.video.muted;
+            if (!DOM.video.muted && DOM.video.volume === 0) {
+                DOM.video.volume = 0.5;
+                State.currentVolume = 0.5;
+                DOM.volumeSlider.value = 50;
+                updateSliderProgress(DOM.volumeSlider);
+            }
+            updateVolumeIcon();
+        });
+        
+        DOM.video.addEventListener('volumechange', updateVolumeIcon);
+
+        DOM.timeSlider.addEventListener('mousedown', (e) => {
+            State.isScrubbing = true;
+            DOM.timeSliderWrapper.classList.add('is-scrubbing');
+            updateTooltip(e); // Atualiza na posição do clique inicial
+            DOM.timeTooltip.style.opacity = '1';
+        });
+        document.addEventListener('mousemove', handleScrub);
+        document.addEventListener('mouseup', () => {
+            if (State.isScrubbing) {
+                State.isScrubbing = false;
+                DOM.timeSliderWrapper.classList.remove('is-scrubbing');
+                DOM.timeTooltip.style.opacity = '0';
+            }
+        });
+
+        DOM.timeSlider.addEventListener('touchstart', (e) => {
+            State.isScrubbing = true;
+            DOM.timeSliderWrapper.classList.add('is-scrubbing');
+            updateTooltip(e);
+            DOM.timeTooltip.style.opacity = '1';
+        }, { passive: true });
+        document.addEventListener('touchmove', handleScrub, { passive: true });
+        document.addEventListener('touchend', () => {
+            if (State.isScrubbing) {
+                State.isScrubbing = false;
+                DOM.timeSliderWrapper.classList.remove('is-scrubbing');
+                DOM.timeTooltip.style.opacity = '0';
+            }
+        });
+
+        DOM.timeSliderWrapper.addEventListener('mouseenter', () => {
+            updateTooltip({ clientX: -9999 }); // Posição inicial fora da tela
+            DOM.timeTooltip.style.opacity = '1';
+        });
+        DOM.timeSliderWrapper.addEventListener('mouseleave', () => {
+            if (!State.isScrubbing) DOM.timeTooltip.style.opacity = '0';
+        });
+        DOM.timeSliderWrapper.addEventListener('mousemove', (e) => {
+            // Só atualiza o tooltip no hover se não estiver arrastando (handleScrub já faz isso)
+            if (!State.isScrubbing) updateTooltip(e);
+        });
+
+        if (characterName === 'lucas') {
+            DOM.lucasInteraction.buttons.forEach(button => {
+                button.addEventListener('click', () => handleLucasButtonClick(button));
+            });
+            randomizeLucasButtons();
+            window.addEventListener('resize', randomizeLucasButtons);
+        }
+        
+        setMedia(0);
+        updateSliderProgress(DOM.volumeSlider);
+        updateVolumeIcon();
+        
+        requestAnimationFrame(animationLoop);
     }
 
-    function handleLuisLogic() {
-        if (currentIndex === 2 && videoElement.currentTime >= 132 && !isBalloonFeatureActive) {
-            isBalloonFeatureActive = true;
-            createBalloon();
-        }
-        if (isBalloonFeatureActive && videoElement.ended) {
-            cleanupBalloonFeature();
-        }
-    }
-
-    function handleNessLogic() {
-        if (currentIndex !== 0) return; // Apenas no primeiro vídeo
-
-        const currentTime = videoElement.currentTime;
-
-        // Estágio 0: Esperando para tocar o som
-        if (nessFeatureState === 0 && currentTime >= 25) {
-            nessPsiSound.play();
-            nessFeatureState = 1; // Avança para o próximo estágio
-        }
-
-        // Estágio 1: Esperando para ativar os balões
-        if (nessFeatureState === 1 && currentTime >= 30) {
-            isBalloonFeatureActive = true;
-            createBalloon();
-            nessFeatureState = 2; // Avança para o estágio final (funcionalidade concluída)
-        }
-    }
-
-    // --- INICIALIZAÇÃO DO PLAYER ---
-    changeMedia(0);
-    requestAnimationFrame(animationLoop);
+    initialize();
 });

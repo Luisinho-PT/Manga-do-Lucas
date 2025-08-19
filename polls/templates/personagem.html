@@ -1,67 +1,120 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon"/>
-    <link rel="stylesheet" href="{% static 'css/personagem.css' %}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    
+    <link rel="stylesheet" href="{% static 'css/personagem.css' %}">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    
     <title>{{ nome_personagem|title }}</title>
 </head>
 <body>
-    <h1>{{ nome_personagem|upper }}</h1>
 
-    <h1>     </h1>
+    <main class="character-sheet" data-character-name="{{ nome_personagem|lower }}">
+        
+        <header class="character-header">
+            <h1>{{ nome_personagem|upper }}</h1>
+        </header>
 
-    {% if media_list %}
-        <div class="video-container">
-            <h2 id="videoCaption" class="video-caption"></h2>
-            <button class="arrow-button left" onclick="changeMedia(-1)">&#8592;</button>
-            <video id="mainVideo" class="video-player" muted autoplay loop>
-                <source id="videoSource" src="" type="video/mp4" />
-            </video>
+        {% if media_list %}
+            <section class="media-player" aria-labelledby="media-player-heading">
+                <h2 id="media-player-heading" class="visually-hidden">Player de Mídia</h2>
 
-            <audio id="visualizerAudioSource" style="display: none;"></audio>
+                <figure class="media-player__figure">
+                    <div id="media-wrapper" class="media-player__wrapper">
+                        <video id="mainVideo" class="media-player__video" autoplay loop playsinline preload="metadata">
+                            <source id="videoSource" src="" type="video/mp4">
+                        </video>
+                        <img id="mainImage" class="media-player__image" src="" alt="">
+                    </div>
+                    
+                    <figcaption id="mediaCaption" class="media-player__caption"></figcaption>
+                    
+                    <div class="media-player__navigation">
+                        <button id="prevButton" class="media-control-button" aria-label="Mídia Anterior">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                        </button>
+                        <button id="nextButton" class="media-control-button" aria-label="Próxima Mídia">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        </button>
+                    </div>
 
-            <img id="mainImage" style="display: none;" />
-            <button class="arrow-button right" onclick="changeMedia(1)">&#8594;</button>
-            <div class="volume-control-container">
-                <button id="volumeButton" class="volume-button"></button>
-                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
-            </div>
-        </div>
-        <div id="time-control-container" class="time-control-container">
-            <div class="slider-wrapper">
-                <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" />
-                <div id="customThumb" class="custom-thumb"></div>
-            </div>
-            <span id="timeDisplay">00:00 / 00:00</span>
-        </div>
+                    <div class="media-player__volume-control">
+                        <button id="volumeButton" class="media-control-button" aria-label="Controlar Volume">
+                            <svg class="volume-icon--on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            <svg class="volume-icon--off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                        </button>
+                        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100" aria-label="Slider de Volume">
+                    </div>
+                </figure>
+                
+                <div id="time-control-container" class="time-controls">
+                    <div class="time-slider-wrapper">
+                        <input type="range" id="timeSlider" class="time-slider" min="0" max="100" value="0" aria-label="Slider de Tempo">
+                        <div id="customThumb" class="custom-thumb"></div>
+                        <div class="time-tooltip">00:00</div>
+                    </div>
+                    <span id="timeDisplay" class="time-controls__display">00:00 / 00:00</span>
+                </div>
+            </section>
 
-        {% if nome_personagem == 'lucas' %}
-            <div class="random-button-container">
-                <button id="btn1" onclick="registerClick('btn1')">🔵</button>
-                <button id="btn2" onclick="registerClick('btn2')">🟢</button>
-                <button id="btn3" onclick="registerClick('btn3')">🔴</button>
-            </div>
-            <div id="popupContainer" class="popup-container" style="display: none;">
-                <img id="finalPopupImage" class="popup-image" src="{% static 'img/lucas/lucas_careca.png' %}" />
+            {% if nome_personagem == 'lucas' %}
+                <section class="interaction-panel" aria-labelledby="lucas-interaction-heading">
+                    <h2 id="lucas-interaction-heading" class="visually-hidden">Interação Especial do Lucas</h2>
+                    <div id="random-button-container" class="button-container">
+                        <button id="btn1" class="interactive-button" aria-label="Botão Azul">🔵</button>
+                        <button id="btn2" class="interactive-button" aria-label="Botão Verde">🟢</button>
+                        <button id="btn3" class="interactive-button" aria-label="Botão Vermelho">🔴</button>
+                    </div>
+                    <div id="popupContainer" class="popup">
+                        <img id="finalPopupImage" class="popup__image" src="{% static 'img/lucas/lucas_careca.png' %}" alt="Resultado da interação.">
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if nome_personagem == 'luis' or nome_personagem == 'ness' %}
+                <div id="balloon-container"></div>
+            {% endif %}
+
+        {% else %}
+            <div class="content-placeholder">
+                <h2>Em Breve</h2>
+                <p>O conteúdo para este personagem está sendo preparado.</p>
             </div>
         {% endif %}
+    </main>
 
-        {% if nome_personagem == 'luis' or nome_personagem == 'ness' %}
-            <div id="balloon-container"></div>
-        {% endif %}
-
-    {% else %}
-        <div class="content-placeholder">
-            <h2>Em breve, conteúdo para este personagem!</h2>
+    {% if nome_personagem == 'luis' %}
+        <div class="stars-background">
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            <div class="star-container"><div class="star"></div></div>
+            
+            <div class="star-container star--corner"><div class="star"></div></div>
+            <div class="star-container star--corner"><div class="star"></div></div>
+            <div class="star-container star--corner"><div class="star"></div></div>
+            <div class="star-container star--corner"><div class="star"></div></div>
         </div>
     {% endif %}
 
     {{ media_list|json_script:"media-data" }}
     {{ balloon_data|json_script:"balloon-data" }}
+    
     <script src="{% static 'js/personagens.js' %}"></script>
-
 </body>
 </html>
