@@ -3,19 +3,28 @@ name: Deploy and Sync Changelogs
 on:
   push:
     branches:
-      - main  # ou o branch que você usa
+      - main # ou o branch que você usa para produção
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # 1. Faz o checkout do seu código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Instala a Vercel CLI (Este é o passo que foi adicionado)
+      # O ambiente do GitHub Actions não tem a Vercel CLI por padrão.
+      # Este comando a instala globalmente para que possa ser usada no passo seguinte.
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      # 3. Executa o deploy para a Vercel
       - name: Deploy to Vercel
         run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}"
       
+      # 4. Chama o endpoint para sincronizar os changelogs após o deploy
       - name: Call sync_changelogs endpoint
         run: |
-         curl -X POST https://manga-do-lucas.vercel.app/sync-changelogs/ \
-          -H "X-Deploy-Token: ${{ secrets.SYNC_CHANGELOGS_TOKEN }}"
+          curl -X POST https://manga-do-lucas.vercel.app/sync-changelogs/ \
+            -H "X-Deploy-Token: ${{ secrets.SYNC_CHANGELOGS_TOKEN }}"
