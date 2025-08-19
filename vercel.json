@@ -15,8 +15,5 @@
       "src": "/(.*)",
       "dest": "manga/wsgi.py"
     }
-  ],
-    "scripts": {
-    "postbuild": "python manage.py sync_changelogs"
-  }
+  ]
 }

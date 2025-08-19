@@ -25,5 +25,6 @@ urlpatterns = [
     path('characters/', characters, name='characters'),  # Characters page URL
     path('chapters/', chapters, name='chapters'),  # Chapters page URL
     path('about/', about, name='about'), # About page URL
-    path('characters/<str:nome_do_personagem>/', pagina_personagem ,name='pagina_personagem') # Specific Character URL
+    path('characters/<str:nome_do_personagem>/', pagina_personagem ,name='pagina_personagem'), # Specific Character URL
+    path("sync-changelogs/", sync_changelogs_view, name="sync_changelogs"),
 ]

@@ -11,6 +11,9 @@ from .forms import CommentForm
 from .models import Comment, Changelog, VersaoSistema
 from .dados import dados
 
+from django.http import JsonResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
+from django.core.management import call_command
 #
 # --- Funções de Interação com a API do GitHub ---
 #
@@ -138,3 +141,16 @@ def pagina_personagem(request, nome_do_personagem):
         'balloon_data': character_data.get('balloon_data', []),
     }
     return render(request, 'personagem.html', context)
+
+
+@csrf_exempt
+def sync_changelogs_view(request):
+    # Proteção: só dispara se receber o token correto
+    secret_token = os.environ.get("SYNC_CHANGELOGS_TOKEN")
+    provided_token = request.headers.get("X-Deploy-Token")
+
+    if secret_token and provided_token == secret_token:
+        call_command("sync_changelogs")
+        return JsonResponse({"status": "ok", "message": "Changelogs sincronizados"})
+    else:
+        return HttpResponseForbidden("Token inválido")

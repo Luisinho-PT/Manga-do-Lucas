@@ -1,0 +1,20 @@
+name: Deploy and Sync Changelogs
+
+on:
+  push:
+    branches:
+      - main  # ou o branch que você usa
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Vercel
+        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}"
+      
+      - name: Call sync_changelogs endpoint
+        run: curl -X POST https://manga-do-lucas.vercel.app/sync-changelogs/ \
+             -H "X-Deploy-Token: ${{ secrets.SYNC_CHANGELOGS_TOKEN }}"
