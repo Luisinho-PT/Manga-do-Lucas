@@ -13,15 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instala a Vercel CLI (Este é o passo que foi adicionado)
-      # O ambiente do GitHub Actions não tem a Vercel CLI por padrão.
-      # Este comando a instala globalmente para que possa ser usada no passo seguinte.
+      # 2. Instala a Vercel CLI
       - name: Install Vercel CLI
         run: npm install -g vercel
 
       # 3. Executa o deploy para a Vercel
+      # A flag "--yes" foi adicionada para confirmar automaticamente o deploy
+      # em um ambiente não-interativo como o GitHub Actions.
       - name: Deploy to Vercel
-        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}"
+        run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
       
       # 4. Chama o endpoint para sincronizar os changelogs após o deploy
       - name: Call sync_changelogs endpoint
