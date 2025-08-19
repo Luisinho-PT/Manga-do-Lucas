@@ -16,5 +16,6 @@ jobs:
         run: vercel --prod --token="${{ secrets.VERCEL_TOKEN }}"
       
       - name: Call sync_changelogs endpoint
-        run: curl -X POST https://manga-do-lucas.vercel.app/sync-changelogs/ \
-             -H "X-Deploy-Token: ${{ secrets.SYNC_CHANGELOGS_TOKEN }}"
+        run: |
+         curl -X POST https://manga-do-lucas.vercel.app/sync-changelogs/ \
+          -H "X-Deploy-Token: ${{ secrets.SYNC_CHANGELOGS_TOKEN }}"
