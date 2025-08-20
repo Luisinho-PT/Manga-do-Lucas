@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const State = {
         currentIndex: 0,
         isScrubbing: false,
+        wasPlayingBeforeScrub: false,
         currentVolume: 1,
         isBalloonFeatureActive: false,
         preloadedSounds: {},
@@ -67,14 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.figure.classList.remove('is-video');
             DOM.video.classList.remove('active');
             DOM.video.pause();
-            DOM.image.src = currentMedia.src;
+            
+            // CORREÇÃO: O JS agora monta a URL ESTÁTICA completa
+            DOM.image.src = `/static/${currentMedia.src}`; 
             DOM.image.alt = currentMedia.caption || `Imagem de ${characterName}`;
             DOM.image.classList.add('active');
-        } else {
+
+        } else { // type === 'video'
             DOM.figure.classList.add('is-video');
             DOM.figure.classList.remove('is-image');
             DOM.image.classList.remove('active');
-            DOM.videoSource.src = currentMedia.src;
+            
+            // CORREÇÃO: O JS agora monta a URL DE STREAMING completa
+            const streamingUrl = `/media/stream/${currentMedia.src}`;
+            DOM.videoSource.src = streamingUrl;
+            
             DOM.video.load();
             DOM.video.play().catch(error => console.warn("Autoplay bloqueado.", error));
             DOM.video.classList.add('active');
@@ -96,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.volumeButton.classList.toggle('is-muted', isMuted);
     }
     
-    function updateSliderProgress(slider) {
-        const percentage = (slider.value / slider.max) * 100;
+    function updateSliderProgress(slider, position) {
+        const percentage = position !== undefined ? position * 100 : (slider.value / slider.max) * 100;
         slider.style.setProperty('--progress', `${percentage}%`);
     }
 
@@ -111,22 +119,27 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.customThumb.style.left = `${thumbPosition}px`;
 
             DOM.timeDisplay.textContent = `${formatTime(DOM.video.currentTime)} / ${formatTime(DOM.video.duration)}`;
-            handleCharacterSpecificLogic();
         }
+        handleCharacterSpecificLogic();
         requestAnimationFrame(animationLoop);
     }
 
     function updateTooltip(e) {
         if (!DOM.video.duration) return;
         const rect = DOM.timeSlider.getBoundingClientRect();
-        const clientX = e.clientX || e.touches[0].clientX;
+        const clientX = e.clientX || e.touches[0]?.clientX;
+        if (clientX === undefined) return;
+
         let pos = (clientX - rect.left) / rect.width;
         pos = Math.max(0, Math.min(1, pos));
+        
         const hoverTime = pos * DOM.video.duration;
         DOM.timeTooltip.textContent = formatTime(hoverTime);
+        
         const tooltipWidth = DOM.timeTooltip.offsetWidth;
-        const thumbPosition = pos * rect.width;
-        let tooltipLeft = thumbPosition - (tooltipWidth / 2);
+        const cursorPositionInPixels = pos * rect.width;
+        let tooltipLeft = cursorPositionInPixels - (tooltipWidth / 2);
+        
         if (tooltipLeft < 0) tooltipLeft = 0;
         if (tooltipLeft + tooltipWidth > rect.width) {
             tooltipLeft = rect.width - tooltipWidth;
@@ -156,22 +169,34 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSliderProgress(DOM.volumeSlider);
     }
 
-    function handleScrub(e) {
-        if (!State.isScrubbing) return;
-        const rect = DOM.timeSlider.getBoundingClientRect();
-        const clientX = e.clientX || e.touches[0].clientX;
-        let pos = (clientX - rect.left) / rect.width;
-        pos = Math.max(0, Math.min(1, pos));
-        DOM.video.currentTime = pos * DOM.video.duration;
-        updateSliderProgress(DOM.timeSlider);
-        const thumbPosition = pos * DOM.timeSlider.offsetWidth;
-        DOM.customThumb.style.left = `${thumbPosition}px`;
-        updateTooltip(e);
-    }
-    
     // =========================================================================
     // [6] LÓGICAS ESPECÍFICAS DE PERSONAGENS
     // =========================================================================
+
+    function manageStarAnimations() {
+        const flyingStars = document.querySelectorAll('.star-container:not(.star--corner)');
+        const animationClasses = [
+            'odyssey-1', 'odyssey-2', 'odyssey-3', 'odyssey-4', 'odyssey-5',
+            'odyssey-6', 'odyssey-7', 'odyssey-8', 'odyssey-9', 'odyssey-10',
+            'odyssey-11', 'odyssey-12', 'odyssey-13', 'odyssey-14', 'odyssey-15'
+        ];
+        flyingStars.forEach(star => {
+            function applyRandomAnimation() {
+                const currentAnimation = star.dataset.currentAnimation;
+                if (currentAnimation) {
+                    star.classList.remove(currentAnimation);
+                }
+                let newAnimation;
+                do {
+                    newAnimation = animationClasses[Math.floor(Math.random() * animationClasses.length)];
+                } while (newAnimation === currentAnimation);
+                star.classList.add(newAnimation);
+                star.dataset.currentAnimation = newAnimation;
+            }
+            star.addEventListener('animationend', applyRandomAnimation);
+            applyRandomAnimation();
+        });
+    }
 
     function cleanupCharacterFeatures() {
         State.isBalloonFeatureActive = false;
@@ -185,25 +210,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleCharacterSpecificLogic() {
-        if (DOM.video.paused) return;
         switch (characterName) {
             case 'luis':
-                if (State.currentIndex === 2 && DOM.video.currentTime >= 132 && !State.isBalloonFeatureActive) {
+                const luisVideoIndex = 2;
+                const luisTimeTrigger = 132;
+                if (State.currentIndex !== luisVideoIndex) {
+                    if (State.isBalloonFeatureActive) {
+                        cleanupCharacterFeatures();
+                    }
+                    return;
+                }
+                if (DOM.video.currentTime >= luisTimeTrigger && !State.isBalloonFeatureActive) {
                     State.isBalloonFeatureActive = true;
                     createBalloon();
+                } 
+                else if (DOM.video.currentTime < luisTimeTrigger && State.isBalloonFeatureActive) {
+                    cleanupCharacterFeatures();
                 }
                 break;
             case 'ness':
-                if (State.currentIndex !== 0) return;
+                const nessVideoIndex = 0;
+                const nessSoundTrigger = 25;
+                if (State.currentIndex !== nessVideoIndex) {
+                    if (State.ness.stage > 0) {
+                        cleanupCharacterFeatures();
+                    }
+                    return;
+                }
                 const currentTime = DOM.video.currentTime;
-                if (State.ness.stage === 0 && currentTime >= 25) {
+                if (currentTime >= nessSoundTrigger && State.ness.stage === 0) {
                     State.ness.sound.play();
                     State.ness.stage = 1;
-                }
-                if (State.ness.stage === 1 && currentTime >= 30) {
-                    State.isBalloonFeatureActive = true;
-                    createBalloon();
-                    State.ness.stage = 2;
+                } 
+                else if (currentTime < nessSoundTrigger && State.ness.stage > 0) {
+                    cleanupCharacterFeatures();
                 }
                 break;
         }
@@ -309,48 +349,67 @@ document.addEventListener('DOMContentLoaded', () => {
         
         DOM.video.addEventListener('volumechange', updateVolumeIcon);
 
-        DOM.timeSlider.addEventListener('mousedown', (e) => {
-            State.isScrubbing = true;
-            DOM.timeSliderWrapper.classList.add('is-scrubbing');
-            updateTooltip(e); // Atualiza na posição do clique inicial
-            DOM.timeTooltip.style.opacity = '1';
-        });
-        document.addEventListener('mousemove', handleScrub);
-        document.addEventListener('mouseup', () => {
-            if (State.isScrubbing) {
-                State.isScrubbing = false;
-                DOM.timeSliderWrapper.classList.remove('is-scrubbing');
-                DOM.timeTooltip.style.opacity = '0';
-            }
-        });
+        // --- Lógica de Scrubbing Robusta ---
+        let finalScrubTime = 0;
 
-        DOM.timeSlider.addEventListener('touchstart', (e) => {
-            State.isScrubbing = true;
-            DOM.timeSliderWrapper.classList.add('is-scrubbing');
+        const processScrubbing = (e) => {
+            if (!State.isScrubbing) return;
+            const rect = DOM.timeSlider.getBoundingClientRect();
+            const clientX = e.clientX || e.touches[0].clientX;
+            let pos = (clientX - rect.left) / rect.width;
+            pos = Math.max(0, Math.min(1, pos));
+            updateSliderProgress(DOM.timeSlider, pos);
+            const thumbPosition = pos * DOM.timeSlider.offsetWidth;
+            DOM.customThumb.style.left = `${thumbPosition}px`;
             updateTooltip(e);
-            DOM.timeTooltip.style.opacity = '1';
-        }, { passive: true });
-        document.addEventListener('touchmove', handleScrub, { passive: true });
-        document.addEventListener('touchend', () => {
-            if (State.isScrubbing) {
-                State.isScrubbing = false;
-                DOM.timeSliderWrapper.classList.remove('is-scrubbing');
-                DOM.timeTooltip.style.opacity = '0';
-            }
-        });
+            finalScrubTime = pos * DOM.video.duration;
+        };
 
+        const stopScrubbing = () => {
+            if (!State.isScrubbing) return;
+            DOM.video.currentTime = finalScrubTime;
+            if (State.wasPlayingBeforeScrub) {
+                DOM.video.play();
+            }
+            State.isScrubbing = false;
+            DOM.timeSliderWrapper.classList.remove('is-scrubbing');
+            DOM.timeTooltip.style.opacity = '0';
+            document.removeEventListener('mousemove', processScrubbing);
+            document.removeEventListener('mouseup', stopScrubbing);
+            document.removeEventListener('touchmove', processScrubbing);
+            document.removeEventListener('touchend', stopScrubbing);
+        };
+
+        const startScrubbing = (e) => {
+            if (!DOM.video.duration) return;
+            State.isScrubbing = true;
+            State.wasPlayingBeforeScrub = !DOM.video.paused;
+            DOM.video.pause();
+            DOM.timeSliderWrapper.classList.add('is-scrubbing');
+            processScrubbing(e);
+            DOM.timeTooltip.style.opacity = '1';
+            document.addEventListener('mousemove', processScrubbing);
+            document.addEventListener('mouseup', stopScrubbing);
+            document.addEventListener('touchmove', processScrubbing, { passive: true });
+            document.addEventListener('touchend', stopScrubbing);
+        };
+
+        DOM.timeSlider.addEventListener('mousedown', startScrubbing);
+        DOM.timeSlider.addEventListener('touchstart', startScrubbing, { passive: true });
+
+        // --- Eventos do Tooltip (Hover) ---
         DOM.timeSliderWrapper.addEventListener('mouseenter', () => {
-            updateTooltip({ clientX: -9999 }); // Posição inicial fora da tela
+            updateTooltip({ clientX: -9999 });
             DOM.timeTooltip.style.opacity = '1';
         });
         DOM.timeSliderWrapper.addEventListener('mouseleave', () => {
             if (!State.isScrubbing) DOM.timeTooltip.style.opacity = '0';
         });
         DOM.timeSliderWrapper.addEventListener('mousemove', (e) => {
-            // Só atualiza o tooltip no hover se não estiver arrastando (handleScrub já faz isso)
             if (!State.isScrubbing) updateTooltip(e);
         });
 
+        // --- Eventos de Personagens Específicos ---
         if (characterName === 'lucas') {
             DOM.lucasInteraction.buttons.forEach(button => {
                 button.addEventListener('click', () => handleLucasButtonClick(button));
@@ -358,11 +417,14 @@ document.addEventListener('DOMContentLoaded', () => {
             randomizeLucasButtons();
             window.addEventListener('resize', randomizeLucasButtons);
         }
+        if (characterName === 'luis') {
+            manageStarAnimations();
+        }
         
+        // --- Inicia o Player ---
         setMedia(0);
         updateSliderProgress(DOM.volumeSlider);
         updateVolumeIcon();
-        
         requestAnimationFrame(animationLoop);
     }
 

@@ -5,6 +5,10 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from datetime import datetime, timezone
 import pytz # Importado para o fuso horário de São Paulo
+from wsgiref.util import FileWrapper
+from django.http import StreamingHttpResponse, HttpResponseNotFound
+from django.conf import settings
+import re
 
 # Imports dos seus models e forms
 from .forms import CommentForm
@@ -155,3 +159,63 @@ def sync_changelogs_view(request):
     else:
         return HttpResponseForbidden("Token inválido")
     
+
+
+RANGE_RE = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
+
+class RangeFileWrapper(object):
+    def __init__(self, filelike, blksize=8192, offset=0, length=None):
+        self.filelike = filelike
+        self.filelike.seek(offset, os.SEEK_SET)
+        self.remaining = length
+        self.blksize = blksize
+
+    def close(self):
+        if hasattr(self.filelike, 'close'):
+            self.filelike.close()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.remaining is None:
+            data = self.filelike.read(self.blksize)
+            if data:
+                return data
+            raise StopIteration()
+        else:
+            if self.remaining <= 0:
+                raise StopIteration()
+            data = self.filelike.read(min(self.remaining, self.blksize))
+            if not data:
+                raise StopIteration()
+            self.remaining -= len(data)
+            return data
+
+def stream_video(request, path):
+    range_header = request.META.get('HTTP_RANGE', '').strip()
+    range_match = RANGE_RE.match(range_header)
+    
+    # CORREÇÃO: Usando 'polls' como o nome da sua app para encontrar o arquivo
+    video_path = os.path.join(settings.BASE_DIR, 'polls', 'static', path)
+
+    try:
+        # ... (O restante da função stream_video permanece o mesmo) ...
+        size = os.path.getsize(video_path)
+        content_type = 'video/mp4'
+        if range_match:
+            first_byte, last_byte = range_match.groups()
+            first_byte = int(first_byte) if first_byte else 0
+            last_byte = int(last_byte) if last_byte else size - 1
+            if last_byte >= size: last_byte = size - 1
+            length = last_byte - first_byte + 1
+            resp = StreamingHttpResponse(RangeFileWrapper(open(video_path, 'rb'), offset=first_byte, length=length), status=206, content_type=content_type)
+            resp['Content-Length'] = str(length)
+            resp['Content-Range'] = f'bytes {first_byte}-{last_byte}/{size}'
+        else:
+            resp = StreamingHttpResponse(FileWrapper(open(video_path, 'rb')), content_type=content_type)
+            resp['Content-Length'] = str(size)
+        resp['Accept-Ranges'] = 'bytes'
+        return resp
+    except FileNotFoundError:
+        return HttpResponseNotFound("Arquivo de vídeo não encontrado.")
