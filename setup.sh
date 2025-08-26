@@ -16,7 +16,7 @@ python3 -m venv "$VENV_DIR"
 # Ativar e instalar dependências
 echo "📦 Instalando dependências do requirements.txt..."
 source "$VENV_DIR/bin/activate"
-pip install --upgrade pip
+python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 
 echo "✅ Ambiente virtual '.venv' recriado com sucesso!"
