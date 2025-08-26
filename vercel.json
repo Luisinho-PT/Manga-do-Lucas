@@ -16,5 +16,16 @@
       "src": "/(.*)",
       "dest": "manga/wsgi.py"
     }
+  ],
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=31536000, immutable"
+        }
+      ]
+    }
   ]
 }
