@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isBalloonFeatureActive: false,
         preloadedSounds: {},
         availablePhrases: [...speechBalloonsData],
-        ness: { stage: 0, sound: new Audio('/static/audio/ness/psi_flash.mp3') },
+        ness: { stage: 0, sound: new Audio('/static/audio/ness/ness_audio.wav') },
         lucas: { clickedButtons: new Set() },
     };
 
@@ -229,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 break;
             case 'ness':
-                const nessVideoIndex = 0;
-                const nessSoundTrigger = 25;
+                const nessVideoIndex = 2;
+                const nessSoundTrigger = 21;
                 if (State.currentIndex !== nessVideoIndex) {
                     if (State.ness.stage > 0) {
                         cleanupCharacterFeatures();

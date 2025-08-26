@@ -18,6 +18,7 @@ dados = {
         'media_list': [
             {'type': 'video', 'src': 'videos/luis/luis_video.mp4', 'caption': 'A lore do meu personagem level 1'},
             {'type': 'video', 'src': 'videos/luis/luis_video2.mp4', 'caption': 'Quando a esperança acaba, uma outra pode lhe iluminar'},
+            {'type': 'video', 'src': 'videos/luis/luis_video4.mp4', 'caption': 'Calma Calabreso'},
             {'type': 'video', 'src': 'videos/luis/luis_video3.mp4', 'caption': 'My Compass Curiosity'}
         ],
         'balloon_data': [
@@ -32,7 +33,7 @@ dados = {
         'media_list': [
             {'type': 'video', 'src': 'videos/licas/licas_video.mp4', 'caption': 'PLIM PLIM PLON'},
             {'type': 'video', 'src': 'videos/licas/licas_video2.mp4', 'caption': 'Ele é o mais honrado'},
-            {'type': 'image', 'src': 'videos/licas/prova.png', 'caption': 'Que prova?'}
+            {'type': 'image', 'src': 'img/licas/prova.png', 'caption': 'Que prova?'}
         ],
         'balloon_data': []
     },
@@ -47,6 +48,8 @@ dados = {
     },
     'ness': {
         'media_list': [
+            {'type': 'image', 'src': 'img/ness/ness_imagem.png', 'caption': 'This is Peak.'},
+            {'type': 'video', 'src': 'videos/ness/ness_video2.mp4', 'caption': 'Driving my Car after the Eclipse'},
             {'type': 'video', 'src': 'videos/ness/ness_video.mp4', 'caption': 'É MAFIA, É MAFIA'},
         ],
         'balloon_data': []

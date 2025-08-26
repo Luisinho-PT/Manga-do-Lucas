@@ -1,626 +1,719 @@
 /* ==========================================================================
-   CHARACTER-SHEET.CSS - VERSÃO FINAL "DELUXE" (COMPLETA E CORRIGIDA)
+   [1] SETTINGS: Variáveis e Configurações Globais
    ========================================================================== */
 
-/* ✨ MELHORIA ARQUITETURAL: Define a ordem explícita das camadas de CSS */
-@layer settings, base, layout, components, effects, utilities;
+:root {
+  --color-background: hsl(0, 0%, 8%);
+  --color-surface: hsl(0, 0%, 12%);
+  --color-text-primary: hsl(0, 0%, 95%);
+  --color-text-secondary: hsl(0, 0%, 60%);
+  --color-text-third: hsla(45, 100%, 70%, 0.8);
+  --color-accent: hsl(45, 100%, 50%);
+  --color-accent-glow: hsla(45, 100%, 70%, 0.8);
 
-/* ==========================================================================
-   [1] SETTINGS: Variáveis e Design System Aprimorado
-   ========================================================================== */
+  --font-family-base: 'Inter', system-ui, sans-serif;
+  --font-family-heading: 'Poppins', sans-serif;
 
-@layer settings {
-  :root {
-    /* Paleta de Cores Expandida */
-    --color-background: hsl(220 15% 5%);
-    --color-surface: hsl(220 15% 10%);
-    --color-text-primary: hsl(220 10% 95%);
-    --color-text-secondary: hsl(220 10% 65%);
-    --color-accent-main: hsl(50 100% 60%);
-    --color-accent-glow: hsl(50 100% 75% / 0.8);
-    --color-accent-soft: hsl(50 100% 95%);
+  --font-size-h1: clamp(3rem, 5vw + 1rem, 5.5rem);
 
-    /* Famílias de Fonte */
-    --font-family-base: 'Inter', system-ui, sans-serif;
-    --font-family-heading: 'Poppins', sans-serif;
+  --spacing-md: 1.6rem;
+  --spacing-lg: 3.2rem;
 
-    /* Escala Tipográfica Fluida */
-    --font-size-1: clamp(1.2rem, 1.5vw + 0.5rem, 1.4rem);
-    --font-size-2: clamp(1.6rem, 1.5vw + 1rem, 1.8rem);
-    --font-size-3: clamp(1.8rem, 2vw + 1rem, 2.2rem);
-    --font-size-4: clamp(4rem, 7vw + 1rem, 7.5rem);
-
-    /* Escala de Espaçamento Fluida */
-    --space-xs: clamp(0.8rem, 1vw + 0.5rem, 1.2rem);
-    --space-s: clamp(1.2rem, 1.5vw + 0.5rem, 1.6rem);
-    --space-m: clamp(1.6rem, 2vw + 1rem, 2.4rem);
-    --space-l: clamp(2.4rem, 4vw + 1rem, 3.2rem);
-    --space-xl: clamp(3.2rem, 5vw + 1rem, 4.8rem);
-
-    /* Propriedades de Design System */
-    --border-radius: 16px;
-    --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
+  --border-radius: 12px;
+  --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-smooth: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* ==========================================================================
-   [2] BASE: Reset e Estilos Fundamentais com Melhorias
+   [2] GENERIC: Reset e Estilos Base
    ========================================================================== */
-@layer base {
-  *, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
 
-  html {
-    font-size: 62.5%;
-    background-color: var(--color-background);
-    background-image: radial-gradient(circle at 50% 50%, hsl(220 15% 12%), var(--color-background));
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  body {
-    color: var(--color-text-primary);
-    font-family: var(--font-family-base);
-    font-size: var(--font-size-2);
-    display: grid;
-    place-items: center;
-    min-height: 100vh;
-    padding: var(--space-l);
-  }
+html {
+  font-size: 62.5%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-surface);
+}
 
-  h1 { 
-    font-family: var(--font-family-heading);
-    font-size: var(--font-size-4); 
-    color: var(--color-accent-soft);
-    text-shadow: 0 0 10px var(--color-accent-glow), 0 0 30px var(--color-accent-main);
-    letter-spacing: 0.1rem;
-    text-align: center;
-    line-height: 1.1;
-    animation: title-glow 5s ease-in-out infinite alternate;
-  }
-  
-  button {
-    all: unset;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+  font-size: 1.6rem;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ==========================================================================
-   [3] LAYOUT: Estrutura Principal da Página
+   [3] COMPONENTES PRINCIPAIS: Character Sheet & Media Player
    ========================================================================== */
-@layer layout {
-  .character-sheet {
-    width: 100%;
-    max-width: 1000px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-xl);
-  }
 
-  .media-player {
-    width: 100%;
-    container-type: inline-size;
-  }
+.character-sheet {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
 }
 
-/* ==========================================================================
-   [4] COMPONENTS: Todos os componentes da UI
-   ========================================================================== */
-@layer components {
-  /* --- Componente Media Player --- */
-  .media-player__figure {
-    position: relative;
-    border-radius: var(--border-radius);
-    transition: all var(--transition-smooth);
-    box-shadow: 0 0 30px 0px hsla(50, 100%, 60%, 0.2);
-  }
+.character-header h1 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h1);
+  color: var(--color-accent);
+  text-shadow: 0 0 15px var(--color-accent-glow);
+  letter-spacing: 0.1rem;
+  text-align: center;
+}
 
-  .media-player__figure:hover {
-    box-shadow: 0 10px 40px 5px hsla(50, 100%, 60%, 0.3);
-    transform: scale(1.02);
-  }
+.media-player {
+  width: 100%;
+}
 
-  .media-player__wrapper {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background-color: #000;
-    border-radius: inherit;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid hsl(0 0% 100% / 0.1);
-    z-index: 10;
-  }
+.media-player__figure {
+  position: relative;
+  border-radius: var(--border-radius);
+}
 
-  .media-player__video,
-  .media-player__image {
-    display: none; width: 100%; height: 100%;
-    z-index: 11;
-  }
+.media-player__figure::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  border-radius: inherit;
+  inset: -5px;
+  background: conic-gradient(from 90deg, var(--color-accent), #ff0, var(--color-accent));
+  filter: blur(25px);
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+}
 
-  .media-player__video.active,
-  .media-player__image.active { display: block; }
-  .media-player__video { object-fit: cover; }
-  .media-player__image { object-fit: contain; }
+.media-player__figure:hover::before {
+  opacity: 1;
+}
 
-/* --- Controles do Player (VERSÃO FINAL CORRIGIDA) --- */
+.media-player__wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  border-radius: inherit;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
 
-  /* 1. A Legenda: continua aparecendo apenas no hover */
-  .media-player__caption {
-    z-index: 10;
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    padding: var(--space-m);
-    text-align: center;
-    font-size: var(--font-size-3);
-    font-weight: 600;
-    color: var(--color-accent-soft);
-    text-shadow: 0 0 5px var(--color-accent-glow), 0 0 15px var(--color-accent-main);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
-    
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-    pointer-events: none;
-  }
+.media-player__video,
+.media-player__image {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
 
-  .media-player__figure:hover .media-player__caption {
-    opacity: 1;
-  }
+.media-player__video.active,
+.media-player__image.active {
+  display: block;
+}
 
-  /* 2. Setas de Navegação e Controle de Volume */
-  .media-player__navigation,
-  .media-player__volume-control {
-    position: absolute;
-    z-index: 10;
-    
-    /* Ficam um pouco transparentes por padrão, mas sempre visíveis */
-    opacity: 0.7; 
-    transition: opacity var(--transition-fast);
-  }
+.media-player__video {
+  object-fit: cover;
+}
 
-  /* Ao passar o mouse sobre o player, ficam 100% opacos */
-  .media-player__figure:hover .media-player__navigation,
-  .media-player__figure:hover .media-player__volume-control {
-    opacity: 1;
-  }
+.media-player__image {
+  object-fit: contain;
+}
 
-  /* 3. Posicionamento Individual */
-  .media-player__navigation {
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 var(--space-s);
-  }
+/* --- Legenda e Controles --- */
 
-  .media-player__volume-control {
-    bottom: var(--space-s);
-    right: var(--space-s);
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-  }
+.media-player__caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: var(--spacing-md);
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-text-third);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+  opacity: 0; /* A legenda continua aparecendo apenas no hover */
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+}
 
-  /* 4. Lógica para esconder o volume em imagens (permanece) */
-  .media-player__figure.is-image .media-player__volume-control {
+.media-player__figure:hover .media-player__caption {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.media-player__figure.is-image .media-player__volume-control {
     display: none;
-  }
+}
 
-  /* 5. Estilos dos botões (sem alteração, mas incluídos para integridade) */
-  .media-control-button {
-    --button-size: 48px;
-    background: hsla(0, 0%, 0%, 0.3);
-    backdrop-filter: blur(5px);
-    border: 1px solid hsl(0 0% 100% / 0.1);
-    border-radius: 50%;
-    color: var(--color-accent-soft);
-    width: var(--button-size);
-    height: var(--button-size);
-    display: grid;
-    place-items: center;
-    transition: all var(--transition-fast);
-  }
-  .media-control-button svg {
-    width: calc(var(--button-size) * 0.55);
-    height: calc(var(--button-size) * 0.55);
-  }
-  .media-control-button:hover {
-    background: var(--color-accent-main);
-    color: var(--color-background);
-    transform: scale(1.15) rotate(15deg);
-  }
-  .media-control-button:focus-visible {
-    outline: 2px solid var(--color-accent-main);
-    outline-offset: 2px;
-  }
-  .media-control-button .volume-icon--on { display: block; }
-  .media-control-button .volume-icon--off { display: none; }
-  .media-control-button.is-muted .volume-icon--on { display: none; }
-  .media-control-button.is-muted .volume-icon--off { display: block; }
+.media-player__figure.is-image + .time-controls {
+  /* Esconde a barra de tempo que está FORA do player */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+}
 
-  /* --- Componentes do Time Slider --- */
-  .time-controls {
-    width: 100%;
-    max-width: 700px;
-    margin-inline: auto;
-    margin-top: var(--space-s);
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-  }
-  .time-slider-wrapper {
-    position: relative;
-    width: 100%;
-    height: 22px;
-    display: flex;
-    align-items: center;
-  }
-  .time-tooltip {
-    position: absolute;
-    bottom: 30px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: var(--color-accent-main);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: var(--font-size-1);
-    font-weight: bold;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.1s ease-in-out;
-  }
-  .time-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%; left: 50%;
-    transform: translateX(-50%);
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid rgba(0, 0, 0, 0.8);
-  }
-  .time-controls__display {
-    font-size: var(--font-size-1);
-    white-space: nowrap;
-  }
-  
-  /* --- Estilo Base dos Sliders --- */
-  .time-slider,
-  .volume-slider {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 8px; background: transparent;
-    border-radius: 5px; outline: none; cursor: pointer;
-  }
-  .time-slider::-webkit-slider-runnable-track,
-  .volume-slider::-webkit-slider-runnable-track {
-    height: 8px;
-    border-radius: 5px;
-    background: linear-gradient(to right, var(--color-accent-main) var(--progress, 0%), var(--color-surface) var(--progress, 0%));
-  }
-  .time-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; background: transparent;
-    border: none; width: 22px; height: 22px; cursor: pointer;
-  }
-  .custom-thumb {
-    position: absolute;
-    top: 50%; left: 0;
-    transform: translate(-50%, -50%);
-    width: 22px; height: 22px; background: white; border-radius: 50%;
-    border: 3px solid var(--color-accent-main);
-    box-shadow: 0 0 10px var(--color-accent-glow);
-    pointer-events: none;
-    transition: transform var(--transition-fast);
-  }
-  .time-slider-wrapper.is-scrubbing .custom-thumb {
-    transform: translate(-50%, -50%) scale(1.3);
-  }
-  .volume-slider { width: 80px; }
-  .volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 22px; height: 22px; background: white; border-radius: 50%;
-    border: 3px solid var(--color-accent-main); margin-top: -7px;
-    box-shadow: 0 0 10px var(--color-accent-glow);
-    transition: transform var(--transition-fast);
-  }
-  
-  /* --- Componente Balão de Fala --- */
-  #balloon-container {
-    position: fixed; inset: 0; z-index: 1000;
-    pointer-events: none; overflow: hidden;
-  }
-  .speech-balloon {
-    position: absolute;
-    background: white; color: var(--color-background);
-    padding: 1.5rem 2rem; border-radius: var(--border-radius);
-    border: 2px solid var(--color-accent-main);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    font-family: var(--font-family-heading); font-size: 1.6rem;
-    font-weight: 600; max-width: 250px; text-align: center;
-    cursor: pointer; pointer-events: all;
-    transform: scale(0.5) rotate(-15deg); opacity: 0;
-    animation: balloon-appear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    transition: transform 0.2s ease-out;
-  }
-  .speech-balloon:hover { transform: scale(1.05); }
-  .speech-balloon.popping { animation: balloon-pop 0.4s ease-in forwards; }
-  .speech-balloon::after {
-    content: ''; position: absolute; width: 0; height: 0;
-    border: 15px solid transparent; border-top-color: var(--color-accent-main); 
-    bottom: -28px; left: 50%; transform: translateX(-50%);
-  }
-  
-  /* --- Componente Interação Lucas --- */
-  .interaction-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-l);
-  }
-  .button-container {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    height: 150px;
-  }
-  .interactive-button {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: none;
-    font-size: 0.9rem;
-    background-color: #333;
-    color: #fff;
-    transition: transform var(--transition-fast);
-    z-index: 100;
-  }
-  .interactive-button:hover {
-    transform: scale(1.3);
-    background-color: #555;
-  }
-  .popup {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    display: grid;
-    place-items: center;
-    z-index: 10000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-fast);
-  }
-  .popup.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .popup__image {
-    max-width: 90vw;
-    max-height: 90vh;
-    border-radius: var(--border-radius);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
-  }
+.media-player__figure.is-video + .time-controls {
+  opacity: 1;
+  visibility: visible;
+}
+/* CORREÇÃO APLICADA AQUI: Setas e volume agora são sempre visíveis */
+.media-player__navigation,
+.media-player__volume-control {
+  opacity: 1; /* Garante que estejam sempre visíveis */
+  pointer-events: auto;
+}
 
-  /* --- Componente Estado Vazio --- */
-  .content-placeholder {
-    text-align: center;
-    padding: 4rem;
-    border: 2px dashed var(--color-surface);
-    border-radius: var(--border-radius);
-  }
-  .content-placeholder h2 {
-    font-size: 3rem;
-    color: var(--color-accent-main);
-  }
-  .content-placeholder p {
-    color: var(--color-text-secondary);
-    margin-top: 0.8rem;
-  }
+.media-player__navigation {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 var(--spacing-md);
+  pointer-events: none; /* Container principal não é clicável */
+}
+
+.media-player__navigation > button {
+  pointer-events: all; /* Apenas os botões são clicáveis */
+}
+
+.media-control-button {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.media-control-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.media-control-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.media-control-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.media-player__volume-control {
+  position: absolute;
+  z-index: 10;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.media-control-button .volume-icon--on {
+    display: block;
+}
+.media-control-button .volume-icon--off {
+    display: none;
+}
+.media-control-button.is-muted .volume-icon--on {
+    display: none;
+}
+.media-control-button.is-muted .volume-icon--off {
+    display: block;
 }
 
 /* ==========================================================================
-   [5] EFEITOS ESPECIAIS: Sinfonia Estelar (Página do Luis)
+   [4] SLIDERS, TOOLTIP E SCROLLBAR
+   ========================================================================== */
+
+/* --- Customização da Barra de Rolagem (Scrollbar) --- */
+/* Funciona em navegadores baseados em WebKit (Chrome, Edge, Safari) */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface); /* Cor do caminho */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent); /* Cor da barra */
+  border-radius: 20px;
+  border: 3px solid var(--color-surface); /* Cria um espaçamento ao redor da barra */
+}
+
+/* Para Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-surface);
+}
+
+
+/* --- Aprimoramento do Time Slider e Tooltip --- */
+
+.time-controls {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.time-slider-wrapper {
+  position: relative;
+  width: 100%;
+  height: 22px; /* Altura para conter o thumb */
+  display: flex;
+  align-items: center;
+}
+
+.time-tooltip {
+  position: absolute;
+  bottom: 30px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease-in-out;
+}
+
+.time-controls__display {
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+
+/* --- Estilo Base dos Sliders (Tempo e Volume) --- */
+
+.time-slider,
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: transparent; /* O fundo visual fica na track */
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.time-slider::-webkit-slider-runnable-track,
+.volume-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 5px;
+  background: linear-gradient(to right, var(--color-accent) var(--progress, 0%), var(--color-surface) var(--progress, 0%));
+}
+
+.time-slider::-moz-range-track,
+.volume-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color-surface);
+}
+
+.time-slider::-moz-range-progress,
+.volume-slider::-moz-range-progress {
+  background-color: var(--color-accent);
+  height: 8px;
+  border-radius: 5px;
+}
+
+/* Esconde a "bolinha" nativa do navegador */
+.time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+.time-slider::-moz-range-thumb {
+  background: transparent;
+  border: none;
+}
+
+/* Estiliza a nossa "bolinha" customizada */
+.custom-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  border: 3px solid var(--color-accent);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+}
+
+/* Efeito de crescimento ao arrastar */
+.time-slider-wrapper.is-scrubbing .custom-thumb {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* Estilo específico do slider de volume */
+.volume-slider {
+  width: 80px;
+}
+/* O slider de volume usa o thumb nativo, então estilizamos ele aqui */
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  border: 3px solid var(--color-accent);
+  margin-top: -7px;
+  box-shadow: 0 0 10px var(--color-accent-glow);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  border: 3px solid var(--color-accent);
+}
+
+/* ==========================================================================
+   [5] COMPONENTES ESPECÍFICOS E ESTADO VAZIO
+   ========================================================================== */
+
+#balloon-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.speech-balloon {
+  position: absolute;
+  background: white;
+  color: var(--color-background);
+  padding: 1.5rem 2rem;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-family-heading);
+  font-size: 1.6rem;
+  font-weight: 600;
+  max-width: 250px;
+  text-align: center;
+  cursor: pointer;
+  pointer-events: all;
+  transform: scale(0.5) rotate(-15deg);
+  opacity: 0;
+  animation: balloon-appear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transition: transform 0.2s ease-out;
+}
+
+.speech-balloon:hover {
+  transform: scale(1.05);
+}
+
+.speech-balloon.popping {
+  animation: balloon-pop 0.4s ease-in forwards;
+}
+
+.speech-balloon::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 15px solid transparent;
+  border-top-color: var(--color-accent); 
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes balloon-appear {
+  from { transform: scale(0.5) rotate(-15deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes balloon-pop {
+  from { transform: scale(1); opacity: 1; }
+  to   { transform: scale(0.2) rotate(15deg); opacity: 0; }
+}
+
+.interaction-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.button-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 150px;
+}
+
+.interactive-button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-color: #333;
+  color: #fff;
+  transition: transform var(--transition-fast);
+  z-index: 100;
+}
+
+.interactive-button:hover {
+  transform: scale(1.3);
+  background-color: #555;
+}
+
+.popup {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.popup.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup__image {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+}
+
+.content-placeholder {
+  text-align: center;
+  padding: 4rem;
+  border: 2px dashed var(--color-surface);
+  border-radius: var(--border-radius);
+}
+
+.content-placeholder h2 {
+  font-family: var(--font-family-heading);
+  font-size: 3rem;
+  color: var(--color-accent);
+}
+
+.content-placeholder p {
+  color: var(--color-text-secondary);
+  margin-top: 0.8rem;
+}
+
+/* ==========================================================================
+   [6] EFEITOS ESPECIAIS: Estrelas Gemini (Página do Luis)
    ========================================================================== */
 
 .stars-background {
   position: fixed;
-  inset: 0;
-  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Colocado atrás para não interferir */
   pointer-events: none;
   overflow: hidden;
-  background: radial-gradient(ellipse at bottom, hsl(220 15% 15%), hsl(220 15% 5%));
 }
 
 .star-container {
   position: absolute;
   top: 0;
   left: 0;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
 }
 
 .star {
-  width: 30px;
+  width: 30px; 
   height: 30px;
-  background-color: var(--color-accent-main);
-  clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
-  animation: star-glow 3s ease-in-out infinite alternate,
-             rotate-and-pulse 8s linear infinite;
+  animation: rotate-and-pulse 5s ease-in-out infinite alternate;
 }
 
-.star-container:not(.star--corner) .star::after {
+.star::before,
+.star::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle at center, var(--color-accent-glow) 5%, transparent 60%);
-  animation: tail-glow 3s ease-in-out infinite alternate;
-  opacity: 0.8;
-  z-index: -1;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-accent);
+  clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+  animation: star-glow 2.5s ease-in-out infinite alternate;
 }
 
-
-/* --- CONJUNTO DE ANIMAÇÕES --- */
+.star::after {
+  filter: blur(15px);
+}
 
 @keyframes star-glow {
-  from { filter: drop-shadow(0 0 5px var(--color-accent-soft)); }
-  to   { filter: drop-shadow(0 0 15px var(--color-accent-glow)); }
+  from { box-shadow: 0 0 10px 5px hsla(50, 100%, 70%, 0.7); }
+  to   { box-shadow: 0 0 25px 15px hsla(50, 100%, 70%, 0.7); }
 }
-@keyframes tail-glow {
-  from { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-  to   { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-}
+
 @keyframes rotate-and-pulse {
-  from { transform: rotate(0deg) scale(var(--size)); }
-  to   { transform: rotate(360deg) scale(var(--size)); }
-}
-@keyframes gentle-sway {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(20deg); }
+  0%   { transform: rotate(0deg) scale(var(--size)); }
+  50%  { transform: rotate(180deg) scale(calc(var(--size) * 1.1)); }
+  100% { transform: rotate(360deg) scale(var(--size)); }
 }
 
-@keyframes odyssey-1 { from { transform: translate(-5vw, -5vh); opacity: 0; } to { transform: translate(105vw, 105vh); opacity: 0; } }
-@keyframes odyssey-2 { from { transform: translate(-5vw, 20vh); opacity: 0; } to { transform: translate(105vw, 25vh); opacity: 0; } }
-@keyframes odyssey-3 { from { transform: translate(80vw, -5vh); opacity: 0; } to { transform: translate(75vw, 105vh); opacity: 0; } }
-@keyframes odyssey-4 {
-  0%   { transform: translate(-5vw, 80vh); opacity: 0; } 50%  { transform: translate(50vw, 20vh); opacity: 1; } 100% { transform: translate(105vw, 10vh); opacity: 0; }
-}
-@keyframes odyssey-5 {
-  0%   { transform: translate(-5vw, 10vh); opacity: 0; } 25%  { transform: translate(30vw, 40vh); opacity: 1; } 50%  { transform: translate(60vw, 10vh); opacity: 1; } 75%  { transform: translate(90vw, 40vh); opacity: 1; } 100% { transform: translate(105vw, 10vh); opacity: 0; }
-}
-@keyframes odyssey-6 {
-  0%   { transform: translate(50vw, -5vh); opacity: 0; } 49%  { transform: scale(1); opacity: 1; } 50%  { transform: scale(1.5); opacity: 0; } 51%  { transform: scale(1); opacity: 1; } 100% { transform: translate(55vw, 105vh); opacity: 0; }
-}
-@keyframes odyssey-7 {
-  0%   { transform: translate(10vw, 105vh); opacity: 0; } 50%  { transform: translate(50vw, 50vh); opacity: 1; } 100% { transform: translate(90vw, 105vh); opacity: 0; }
-}
-@keyframes odyssey-8 {
-  0%   { transform: translate(-5vw, 90vh); opacity: 0; } 20%  { transform: translate(45vw, 85vh); opacity: 1; } 80%  { transform: translate(55vw, 80vh); opacity: 1; } 100% { transform: translate(105vw, 75vh); opacity: 0; }
-}
-@keyframes odyssey-9 {
-  0%   { transform: translate(-5vw, 5vh); opacity: 0; } 10%  { transform: translate(10vw, 10vh); opacity: 1; } 90%  { transform: translate(90vw, 95vh); opacity: 1; } 100% { transform: translate(105vw, 100vh); opacity: 0; }
-}
-@keyframes odyssey-10 {
-  0%   { transform: translate(10vw, -5vh); opacity: 0; } 25%  { transform: translate(15vw, 50vh); opacity: 1; } 50%  { transform: translate(10vw, 105vh); opacity: 0; } 75%  { transform: translate(5vw, 50vh); opacity: 1; } 100% { transform: translate(10vw, -5vh); opacity: 0; }
-}
-@keyframes odyssey-11 {
-  0%   { transform: translate(30vw, -5vh); opacity: 0; animation-timing-function: ease-in; } 100% { transform: translate(35vw, 105vh); opacity: 0; }
-}
-@keyframes odyssey-12 {
-  0%   { transform: translate(60vw, 105vh); opacity: 0; animation-timing-function: ease-out; } 100% { transform: translate(55vw, -5vh); opacity: 0; }
-}
-@keyframes odyssey-13 {
-  0%   { transform: translate(-5vw, 30vh); opacity: 0; } 50%  { transform: translate(105vw, 70vh); opacity: 1; } 100% { transform: translate(-5vw, 30vh); opacity: 0; }
-}
-@keyframes odyssey-14 {
-  0%   { transform: translate(50vw, 50vh) scale(0); opacity: 0; } 50%  { transform: scale(1.2); opacity: 1; } 100% { transform: translate(50vw, 50vh) scale(0); opacity: 0; }
-}
-@keyframes odyssey-15 {
-  0%   { transform: translate(-5vw, 50vh) scale(0.5); opacity: 0; } 25%  { transform: translate(50vw, 105vh); } 50%  { transform: translate(105vw, 50vh); opacity: 1; } 75%  { transform: translate(50vw, -5vh); } 100% { transform: translate(-5vw, 50vh); opacity: 0; }
+@keyframes move-path-1 {
+  from { transform: translate(-10vw, -10vh); opacity: 0; }
+  to   { transform: translate(110vw, 110vh); opacity: 1; }
 }
 
-/* --- Atribuição de Tamanho e Delay Inicial (via CSS) --- */
-.star-container:nth-of-type(1)  { --size: 0.7; animation-delay: -2s; }
-.star-container:nth-of-type(2)  { --size: 0.9; animation-delay: -8s; }
-.star-container:nth-of-type(3)  { --size: 0.5; animation-delay: -15s; }
-.star-container:nth-of-type(4)  { --size: 1.1; animation-delay: -4s; }
-.star-container:nth-of-type(5)  { --size: 0.8; animation-delay: -21s; }
-.star-container:nth-of-type(6)  { --size: 0.6; animation-delay: -5s; }
-.star-container:nth-of-type(7)  { --size: 1.2; animation-delay: -18s; }
-.star-container:nth-of-type(8)  { --size: 0.7; animation-delay: -1s; }
-.star-container:nth-of-type(9)  { --size: 0.9; animation-delay: -9s; }
-.star-container:nth-of-type(10) { --size: 0.5; animation-delay: -12s; }
-.star-container:nth-of-type(11) { --size: 1.0; animation-delay: -6s; }
-.star-container:nth-of-type(12) { --size: 0.8; animation-delay: -20s; }
-.star-container:nth-of-type(13) { --size: 0.6; animation-delay: -14s; }
-.star-container:nth-of-type(14) { --size: 1.3; animation-delay: -7s; }
-.star-container:nth-of-type(15) { --size: 0.7; animation-delay: -3s; }
-.star-container:nth-of-type(16) { --size: 0.9; animation-delay: -11s; }
-.star-container:nth-of-type(17) { --size: 1.1; animation-delay: -19s; }
-.star-container:nth-of-type(18) { --size: 0.6; animation-delay: -28s; }
-.star-container:nth-of-type(19) { --size: 0.8; animation-delay: -17s; }
-.star-container:nth-of-type(20) { --size: 1.0; animation-delay: -13s; }
-.star-container:nth-of-type(21) { --size: 0.7; animation-delay: -22s; }
-.star-container:nth-of-type(22) { --size: 0.9; animation-delay: -27s; }
-.star-container:nth-of-type(23) { --size: 1.1; animation-delay: -24s; }
-.star-container:nth-of-type(24) { --size: 0.6; animation-delay: -31s; }
-.star-container:nth-of-type(25) { --size: 0.8; animation-delay: -26s; }
-.star-container:nth-of-type(26) { --size: 1.0; animation-delay: -33s; }
+@keyframes move-path-2 {
+  from { transform: translate(-10vw, 40vh); opacity: 0; }
+  50%  { transform: translate(50vw, 60vh); }
+  to   { transform: translate(110vw, 80vh); opacity: 1; }
+}
 
-/* --- Classes de Animação (para o JS) --- */
-.odyssey-1 { animation-name: odyssey-1; animation-duration: 25s; }
-.odyssey-2 { animation-name: odyssey-2; animation-duration: 15s; }
-.odyssey-3 { animation-name: odyssey-3; animation-duration: 40s; }
-.odyssey-4 { animation-name: odyssey-4; animation-duration: 22s; }
-.odyssey-5 { animation-name: odyssey-5; animation-duration: 30s; }
-.odyssey-6 { animation-name: odyssey-6; animation-duration: 12s; }
-.odyssey-7 { animation-name: odyssey-7; animation-duration: 28s; }
-.odyssey-8 { animation-name: odyssey-8; animation-duration: 18s; }
-.odyssey-9 { animation-name: odyssey-9; animation-duration: 20s; }
-.odyssey-10 { animation-name: odyssey-10; animation-duration: 16s; }
-.odyssey-11 { animation-name: odyssey-11; animation-duration: 24s; }
-.odyssey-12 { animation-name: odyssey-12; animation-duration: 26s; }
-.odyssey-13 { animation-name: odyssey-13; animation-duration: 35s; }
-.odyssey-14 { animation-name: odyssey-14; animation-duration: 10s; }
-.odyssey-15 { animation-name: odyssey-15; animation-duration: 45s; }
+@keyframes move-path-3 {
+  from { transform: translate(110vw, 95vh); opacity: 0; }
+  to   { transform: translate(-10vw, 5vh); opacity: 1; }
+}
 
-/* --- Configuração das Estrelas de Canto --- */
+.star-container:nth-of-type(-n+12) {
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.star-container:nth-of-type(1)  { --size: 0.8; animation: move-path-1 15s -2s infinite linear; }
+.star-container:nth-of-type(2)  { --size: 0.6; animation: move-path-2 20s -8s infinite linear; }
+.star-container:nth-of-type(3)  { --size: 1.0; animation: move-path-3 18s -15s infinite linear; }
+.star-container:nth-of-type(4)  { --size: 0.5; animation: move-path-1 22s -4s infinite linear; }
+.star-container:nth-of-type(5)  { --size: 0.9; animation: move-path-2 14s -11s infinite linear; }
+.star-container:nth-of-type(6)  { --size: 0.7; animation: move-path-3 16s -5s infinite linear; }
+.star-container:nth-of-type(7)  { --size: 1.1; animation: move-path-1 25s -18s infinite linear; }
+.star-container:nth-of-type(8)  { --size: 0.4; animation: move-path-2 17s -1s infinite linear; }
+.star-container:nth-of-type(9)  { --size: 0.8; animation: move-path-3 19s -9s infinite linear; }
+.star-container:nth-of-type(10) { --size: 0.6; animation: move-path-1 21s -12s infinite linear; }
+.star-container:nth-of-type(11) { --size: 0.9; animation: move-path-2 13s -6s infinite linear; }
+.star-container:nth-of-type(12) { --size: 0.5; animation: move-path-3 28s -20s infinite linear; }
+
 .star--corner {
   animation: none;
 }
 .star--corner .star {
-  animation-name: star-glow, gentle-sway;
-  animation-timing-function: ease-in-out, ease-in-out;
-  animation-iteration-count: infinite, infinite;
-  animation-direction: alternate, alternate;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
-.star-container.star--corner:nth-of-type(27) { --size: 1.0; top: 10vh; left: 10vw; }
-.star-container.star--corner:nth-of-type(28) { --size: 0.9; top: 12vh; right: 8vw; left: auto; }
-.star-container.star--corner:nth-of-type(29) { --size: 1.1; top: auto; bottom: 10vh; left: 12vw; }
-.star-container.star--corner:nth-of-type(30) { --size: 0.8; top: auto; bottom: 12vh; right: 10vw; left: auto; }
 
-.star-container.star--corner .star { 
-  animation-duration: 3s, 20s;
+.star-container.star--corner:nth-of-type(13) {
+  --size: 1.0; top: 10vh; left: 10vw; 
 }
-.star-container.star--corner:nth-of-type(27) .star { animation-delay: 0s, -2s; }
-.star-container.star--corner:nth-of-type(28) .star { animation-delay: 0s, -8s; }
-.star-container.star--corner:nth-of-type(29) .star { animation-delay: 0s, -12s; }
-.star-container.star--corner:nth-of-type(30) .star { animation-delay: 0s, -5s; }
+.star-container.star--corner:nth-of-type(13) .star { 
+  animation-duration: 20s; animation-delay: -2s; 
+}
 
-/* ==========================================================================
-   [6] UTILITIES: Classes Utilitárias e Overrides
-   ========================================================================== */
-@layer utilities {
-  .visually-hidden {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0);
-    white-space: nowrap; border: 0;
-  }
-  ::-webkit-scrollbar { width: 12px; }
-  ::-webkit-scrollbar-track { background: var(--color-surface); }
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--color-accent-main);
-    border-radius: 20px;
-    border: 3px solid var(--color-surface);
-  }
+.star-container.star--corner:nth-of-type(14) {
+  --size: 0.9; top: 12vh; right: 8vw; left: auto;
+}
+.star-container.star--corner:nth-of-type(14) .star { 
+  animation-duration: 18s; animation-delay: -8s; 
+}
+
+.star-container.star--corner:nth-of-type(15) {
+  --size: 1.1; top: auto; bottom: 10vh; left: 12vw; 
+}
+.star-container.star--corner:nth-of-type(15) .star { 
+  animation-duration: 22s; animation-delay: -12s; 
+}
+
+.star-container.star--corner:nth-of-type(16) {
+  --size: 0.8; top: auto; bottom: 12vh; right: 10vw; left: auto;
+}
+.star-container.star--corner:nth-of-type(16) .star { 
+  animation-duration: 17s; animation-delay: -5s; 
 }
 
 /* ==========================================================================
    [7] RESPONSIVIDADE (Mobile)
    ========================================================================== */
+
 @media (max-width: 768px) {
-  body { padding: var(--space-m); }
-  .stars-background { display: none; }
+  body {
+    padding: var(--spacing-md);
+  }
+
+  .media-player__controls-bar {
+    padding: 0.8rem;
+    gap: 1.2rem;
+  }
+
+  .time-controls {
+    gap: 1.2rem;
+  }
+
+  .time-controls__display {
+    font-size: 1.2rem;
+  }
+
+  .stars-background {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .volume-slider { display: none; }
-  .media-player__caption { font-size: var(--font-size-1); }
+  .volume-slider {
+      display: none;
+  }
+  .media-player__caption {
+      font-size: 1.4rem;
+  }
 }
