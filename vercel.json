@@ -1,16 +1,12 @@
 {
   "version": 2,
   "buildCommand": "bash build.sh",
-  "builds": [
-    {
-      "src": "manga/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.9"
-      }
+  "functions": {
+    "manga/wsgi.py": {
+      "runtime": "python3.9",
+      "maxLambdaSize": "15mb"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/static/(.*)",
