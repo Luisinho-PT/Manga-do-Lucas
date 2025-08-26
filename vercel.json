@@ -1,31 +1,16 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "manga/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.9",
-        "buildCommand": "bash build.sh"
-      }
-    }
-  ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "manga/wsgi.py"
-    }
-  ],
-  "headers": [
-    {
       "source": "/static/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, s-maxage=31536000, immutable"
-        }
-      ]
+      "headers": {
+        "Cache-Control": "public, s-maxage=31536000, immutable"
+      },
+      "continue": true
+    },
+    {
+      "source": "/(.*)",
+      "dest": "manga/wsgi.py"
     }
   ]
 }
