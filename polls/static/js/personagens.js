@@ -58,10 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // [3] FUNÇÕES PRINCIPAIS DO PLAYER
     // =========================================================================
 
-    function setMedia() {
+function setMedia() {
         cleanupCharacterFeatures();
         const currentMedia = mediaList[State.currentIndex];
         DOM.caption.textContent = currentMedia.caption || '';
+
+        // O Django agora deve enviar a URL completa no campo 'src'.
+        // O JavaScript apenas a utiliza diretamente.
 
         if (currentMedia.type === 'image') {
             DOM.figure.classList.add('is-image');
@@ -69,8 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.video.classList.remove('active');
             DOM.video.pause();
             
-            // CORREÇÃO: O JS agora monta a URL ESTÁTICA completa
-            DOM.image.src = `/static/${currentMedia.src}`; 
+            // CORREÇÃO: Usamos a URL completa que vem do backend.
+            DOM.image.src = currentMedia.src; 
             DOM.image.alt = currentMedia.caption || `Imagem de ${characterName}`;
             DOM.image.classList.add('active');
 
@@ -79,16 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.figure.classList.remove('is-image');
             DOM.image.classList.remove('active');
             
-            // CORREÇÃO: O JS agora monta a URL DE STREAMING completa
-            const streamingUrl = `/media/stream/${currentMedia.src}`;
-            DOM.videoSource.src = streamingUrl;
+            // CORREÇÃO: Usamos a URL completa do vídeo que vem do backend.
+            DOM.videoSource.src = currentMedia.src;
             
-            DOM.video.load();
-            DOM.video.play().catch(error => console.warn("Autoplay bloqueado.", error));
+            DOM.video.load(); // Recarrega o vídeo com a nova fonte
+            DOM.video.play().catch(error => console.warn("Autoplay do vídeo foi bloqueado pelo navegador.", error));
             DOM.video.classList.add('active');
         }
     }
-
+    
     function formatTime(seconds) {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
