@@ -1,13 +1,16 @@
 {
   "version": 2,
-  "buildCommand": "bash build.sh",
-  "functions": {
-    "manga/wsgi.py": {
-      "runtime": "@vercel/python@3.12",
-      "memory": 1024,
-      "maxDuration": 60
+  "builds": [
+    {
+      "src": "manga/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.9",
+        "buildCommand": "bash build.sh"
+      }
     }
-  },
+  ],
   "routes": [
     {
       "src": "/static/(.*)",
