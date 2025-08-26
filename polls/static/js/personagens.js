@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleCharacterSpecificLogic() {
         switch (characterName) {
             case 'luis':
-                const luisVideoIndex = 2;
+                const luisVideoIndex = 3;
                 const luisTimeTrigger = 132;
                 if (State.currentIndex !== luisVideoIndex) {
                     if (State.isBalloonFeatureActive) {
