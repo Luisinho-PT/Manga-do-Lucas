@@ -3,7 +3,7 @@
   "buildCommand": "bash build.sh",
   "functions": {
     "manga/wsgi.py": {
-      "runtime": "python3.9",
+      "runtime": "@vercel/python@3.12",
       "memory": 1024,
       "maxDuration": 60
     }
