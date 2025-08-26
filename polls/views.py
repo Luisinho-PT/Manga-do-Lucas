@@ -89,6 +89,7 @@ def main_page(request):
 def history(request):
     return render(request, 'history.html')
 
+
 # OTIMIZAÇÃO: Cache de 24 horas. O conteúdo só muda com deploy.
 @cache_control(public=True, max_age=0, s_maxage=86400)
 def characters(request):
