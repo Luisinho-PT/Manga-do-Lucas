@@ -27,5 +27,4 @@ urlpatterns = [
     path('about/', about, name='about'), # About page URL
     path('characters/<str:nome_do_personagem>/', pagina_personagem ,name='pagina_personagem'), # Specific Character URL
     path("sync-changelogs/", sync_changelogs_view, name="sync_changelogs"),
-    path('media/stream/<path:path>', stream_video, name='stream_video'),
 ]

@@ -1,23 +1,22 @@
 import os
 import requests
-from django.http import Http404
+import datetime
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from datetime import datetime, timezone
-import pytz # Importado para o fuso horário de São Paulo
-from wsgiref.util import FileWrapper
-from django.http import StreamingHttpResponse, HttpResponseNotFound
+from datetime import timezone
+import pytz
 from django.conf import settings
-import re
+from django.core.management import call_command
+from django.views.decorators.csrf import csrf_exempt
+
+# --- OTIMIZAÇÃO: Importando o decorador de cache ---
+from django.views.decorators.cache import cache_control
 
 # Imports dos seus models e forms
 from .forms import CommentForm
 from .models import Comment, Changelog, VersaoSistema
 from .dados import dados
-
-from django.http import JsonResponse, HttpResponseForbidden
-from django.views.decorators.csrf import csrf_exempt
-from django.core.management import call_command
 #
 # --- Funções de Interação com a API do GitHub ---
 #
@@ -60,56 +59,53 @@ def save_recent_commits_to_db(limit=5):
 # --- Views do seu Site ---
 #
 
+# OTIMIZAÇÃO: Cache de 24 horas na Vercel.
+# O conteúdo desta página só muda em um novo deploy, então podemos usar um cache longo.
+# max_age=0 força o navegador a sempre verificar com a Vercel, que servirá do cache.
+@cache_control(public=True, max_age=0, s_maxage=86400, stale_while_revalidate=30)
 def main_page(request):
     """
     View da página inicial que exibe informações de versão, changelog e fundo dinâmico.
     """
+    # ... (lógica da view original) ...
     br_tz = pytz.timezone('America/Sao_Paulo')
-    
-    # Busca a informação de versão do sistema
     versao = VersaoSistema.objects.order_by('-atualizado_em').first()
-    deploy_date = datetime.now(tz=br_tz).strftime('%d/%m/%Y')
-    commit_info = f"{versao.numero} – Deploy: {deploy_date}" if versao else f"Versão desconhecida – Deploy: {deploy_date}"
-
-    # Busca os 5 últimos changelogs do banco de dados para exibir
+    deploy_date = versao.atualizado_em.astimezone(br_tz).strftime('%d/%m/%Y') if versao else 'N/A'
+    commit_info = f"{versao.numero} – Deploy: {deploy_date}" if versao else "Versão desconhecida"
     changelog_objs = Changelog.objects.filter(exibir=True).order_by('-date')[:5]
-
-    changelog_data = []
-    for entry in changelog_objs:
-        # --- CORREÇÃO PRINCIPAL APLICADA AQUI ---
-        # A data já vem "aware" do banco, então apenas convertemos para o fuso local.
-        local_dt = entry.date.astimezone(br_tz)
-        
-        changelog_data.append({
-            "message": entry.message,
-            "date": local_dt,  # Enviamos o OBJETO de data/hora, não uma string!
-        })
-
-    # Contexto final para o template
+    changelog_data = [
+        {"message": entry.message, "date": entry.date.astimezone(br_tz)}
+        for entry in changelog_objs
+    ]
     context = {
         "commit_info": commit_info,
         "changelog": changelog_data,
-        "background_image_url": '/static/img/background.png'  # Caminho para sua imagem de fundo
+        "background_image_url": '/static/img/background.png'
     }
-    
     return render(request, 'main_page.html', context)
 
-
+# OTIMIZAÇÃO: Cache de 24 horas. Página estática.
+@cache_control(public=True, max_age=0, s_maxage=86400)
 def history(request):
     return render(request, 'history.html')
 
-
+# OTIMIZAÇÃO: Cache de 24 horas. O conteúdo só muda com deploy.
+@cache_control(public=True, max_age=0, s_maxage=86400)
 def characters(request):
     nomes_dos_personagens = list(dados.keys())
     context = {'personagens': nomes_dos_personagens,
-               "background_image_url": '/static/img/background2.png'
-    }
+               "background_image_url": '/static/img/background2.png'}
     return render(request, 'characters.html', context)
 
+# OTIMIZAÇÃO: Cache de 24 horas. Página estática.
+@cache_control(public=True, max_age=0, s_maxage=86400)
 def chapters(request):
     return render(request, 'chapters.html')
 
-
+# OTIMIZAÇÃO: Cache curto de 5 minutos para a lista de comentários.
+# Isso reduz drasticamente as leituras do banco de dados sob tráfego intenso,
+# mas ainda permite que novos comentários apareçam rapidamente.
+@cache_control(public=True, max_age=0, s_maxage=300, stale_while_revalidate=30)
 def about(request):
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -133,7 +129,8 @@ def about(request):
     }
     return render(request, 'about.html', context)
 
-
+# OTIMIZAÇÃO: Cache de 24 horas. O conteúdo só muda com deploy.
+@cache_control(public=True, max_age=0, s_maxage=86400)
 def pagina_personagem(request, nome_do_personagem):
     character_data = dados.get(nome_do_personagem.lower())
     if character_data is None:
@@ -147,9 +144,10 @@ def pagina_personagem(request, nome_do_personagem):
     return render(request, 'personagem.html', context)
 
 
+# NENHUMA OTIMIZAÇÃO NECESSÁRIA AQUI.
+# Esta é uma view de webhook/API, não deve ser cacheada.
 @csrf_exempt
 def sync_changelogs_view(request):
-    # Proteção: só dispara se receber o token correto
     secret_token = os.environ.get("SYNC_CHANGELOGS_TOKEN")
     provided_token = request.headers.get("X-Deploy-Token")
 
@@ -158,64 +156,3 @@ def sync_changelogs_view(request):
         return JsonResponse({"status": "ok", "message": "Changelogs sincronizados"})
     else:
         return HttpResponseForbidden("Token inválido")
-    
-
-
-RANGE_RE = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
-
-class RangeFileWrapper(object):
-    def __init__(self, filelike, blksize=8192, offset=0, length=None):
-        self.filelike = filelike
-        self.filelike.seek(offset, os.SEEK_SET)
-        self.remaining = length
-        self.blksize = blksize
-
-    def close(self):
-        if hasattr(self.filelike, 'close'):
-            self.filelike.close()
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.remaining is None:
-            data = self.filelike.read(self.blksize)
-            if data:
-                return data
-            raise StopIteration()
-        else:
-            if self.remaining <= 0:
-                raise StopIteration()
-            data = self.filelike.read(min(self.remaining, self.blksize))
-            if not data:
-                raise StopIteration()
-            self.remaining -= len(data)
-            return data
-
-def stream_video(request, path):
-    range_header = request.META.get('HTTP_RANGE', '').strip()
-    range_match = RANGE_RE.match(range_header)
-    
-    # CORREÇÃO: Usando 'polls' como o nome da sua app para encontrar o arquivo
-    video_path = os.path.join(settings.BASE_DIR, 'polls', 'static', path)
-
-    try:
-        # ... (O restante da função stream_video permanece o mesmo) ...
-        size = os.path.getsize(video_path)
-        content_type = 'video/mp4'
-        if range_match:
-            first_byte, last_byte = range_match.groups()
-            first_byte = int(first_byte) if first_byte else 0
-            last_byte = int(last_byte) if last_byte else size - 1
-            if last_byte >= size: last_byte = size - 1
-            length = last_byte - first_byte + 1
-            resp = StreamingHttpResponse(RangeFileWrapper(open(video_path, 'rb'), offset=first_byte, length=length), status=206, content_type=content_type)
-            resp['Content-Length'] = str(length)
-            resp['Content-Range'] = f'bytes {first_byte}-{last_byte}/{size}'
-        else:
-            resp = StreamingHttpResponse(FileWrapper(open(video_path, 'rb')), content_type=content_type)
-            resp['Content-Length'] = str(size)
-        resp['Accept-Ranges'] = 'bytes'
-        return resp
-    except FileNotFoundError:
-        return HttpResponseNotFound("Arquivo de vídeo não encontrado.")
