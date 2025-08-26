@@ -1,35 +1,19 @@
 #!/bin/bash
 
-# --- MODO DE DEBUG ---
-# O comando 'set -ex' é nosso superpoder aqui:
-# 'e': Sai IMEDIATAMENTE se qualquer comando falhar. Isso vai quebrar o build e nos mostrar o erro.
-# 'x': Mostra cada comando no log antes de executá-lo.
+# 'e' sai se um comando falhar.
+# 'x' mostra os comandos no log.
 set -ex
 
-echo "--- INICIANDO SCRIPT DE BUILD (MODO DEBUG) ---"
+echo "--- INICIANDO SCRIPT DE BUILD (VERSÃO CORRIGIDA) ---"
 
-# Vamos verificar se as variáveis de ambiente essenciais do Django existem
-# Se a SECRET_KEY não estiver definida nas configurações da Vercel, o build vai falhar aqui.
-if [ -z "$SECRET_KEY" ]; then
-  echo "ERRO: A variável de ambiente SECRET_KEY não está definida!"
-  exit 1
-fi
+# A Vercel já instalou as dependências do requirements.txt.
+# Então, pulamos diretamente para os comandos do Django.
 
-# Lista os arquivos na raiz para confirmar que tudo está no lugar certo
-echo "Listando arquivos na raiz do projeto:"
-ls -la
-
-# Instala as dependências
-echo "Instalando dependências..."
-pip install -r requirements.txt
-
-# Roda as migrações (se falhar aqui, o build vai parar e mostrar o erro)
+# Usamos 'python3' para garantir que estamos usando a versão correta do Python.
 echo "Rodando migrações..."
-python manage.py migrate
+python3 manage.py migrate
 
-# Roda o collectstatic (se falhar aqui, o build vai parar e mostrar o erro)
-# Adicionamos o --clear para garantir que a pasta de estáticos esteja limpa
 echo "Rodando collectstatic..."
-python manage.py collectstatic --noinput --clear
+python3 manage.py collectstatic --noinput --clear
 
 echo "--- SCRIPT DE BUILD CONCLUÍDO COM SUCESSO ---"
