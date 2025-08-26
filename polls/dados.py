@@ -38,7 +38,7 @@ dados = {
         'media_list': [
             {'type': 'video', 'src': f'{MEDIA_BASE_URL}videos/licas/licas_video.mp4', 'caption': 'PLIM PLIM PLON'},
             {'type': 'video', 'src': f'{MEDIA_BASE_URL}videos/licas/licas_video2.mp4', 'caption': 'Ele é o mais honrado'},
-            {'type': 'image', 'src': f'{MEDIA_BASE_URL}images/licas/prova.png', 'caption': 'Que prova?'}
+            {'type': 'image', 'src': f'{MEDIA_BASE_URL}img/licas/prova.png', 'caption': 'Que prova?'}
         ],
         'balloon_data': []
     },
@@ -53,7 +53,7 @@ dados = {
     },
     'ness': {
         'media_list': [
-            {'type': 'image', 'src': f'{MEDIA_BASE_URL}images/ness/ness_imagem.png', 'caption': 'This is Peak.'},
+            {'type': 'image', 'src': f'{MEDIA_BASE_URL}img/ness/ness_imagem.png', 'caption': 'This is Peak.'},
             {'type': 'video', 'src': f'{MEDIA_BASE_URL}videos/ness/ness_video2.mp4', 'caption': 'Driving my Car after the Eclipse'},
             {'type': 'video', 'src': f'{MEDIA_BASE_URL}videos/ness/ness_video.mp4', 'caption': 'É MAFIA, É MAFIA'},
         ],
