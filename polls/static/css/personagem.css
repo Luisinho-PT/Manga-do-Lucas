@@ -158,6 +158,8 @@ body {
   opacity: 0; /* A legenda continua aparecendo apenas no hover */
   transition: opacity var(--transition-fast);
   pointer-events: none;
+  border: #000;
+  border-radius: 6px;
 }
 
 .media-player__figure:hover .media-player__caption {
