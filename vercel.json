@@ -2,14 +2,14 @@
   "version": 2,
   "routes": [
     {
-      "source": "/static/(.*)",
+      "src": "/static/(.*)",
       "headers": {
         "Cache-Control": "public, s-maxage=31536000, immutable"
       },
       "continue": true
     },
     {
-      "source": "/(.*)",
+      "src": "/(.*)",
       "dest": "manga/wsgi.py"
     }
   ]
