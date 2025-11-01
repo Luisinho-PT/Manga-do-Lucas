@@ -8,7 +8,7 @@
 
 Este é o repositório oficial do "Mangá do Luquinhas", um site pessoal criado com Django para apresentar e compartilhar a história, os personagens e os capítulos de um mangá original. O projeto foi desenvolvido com foco em um design moderno, responsivo e com funcionalidades dinâmicas.
 
-### ✨ [Acesse o Site Ao Vivo](https://seu-link-do-vercel.app) ✨
+### ✨ [Acesse o Site Ao Vivo](https://manga-do-lucas.vercel.app) ✨
 
 ---
 

@@ -72,7 +72,7 @@ def main_page(request):
     versao = VersaoSistema.objects.order_by('-atualizado_em').first()
     deploy_date = versao.atualizado_em.astimezone(br_tz).strftime('%d/%m/%Y') if versao else 'N/A'
     commit_info = f"{versao.numero} – Deploy: {deploy_date}" if versao else "Versão desconhecida"
-    changelog_objs = Changelog.objects.filter(exibir=True).order_by('-date')[:5]
+    changelog_objs = Changelog.objects.filter(exibir=True).order_by('-date')[:6]
     changelog_data = [
         {"message": entry.message, "date": entry.date.astimezone(br_tz)}
         for entry in changelog_objs

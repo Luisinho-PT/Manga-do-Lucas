@@ -18,13 +18,13 @@
 
     <header class="hero-header">
         <div class="hero-content">
-            <h1>Bem-vindo ao Mangá do Luquinhas!</h1>
+            <h1 class="animate-fade-in">Bem-vindo ao Mangá do Luquinhas!</h1>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="{% url 'history' %}">História</a></li>
-                    <li><a href="{% url 'characters' %}">Personagens</a></li>
-                    <li><a href="{% url 'chapters' %}">Capítulos</a></li>
-                    <li><a href="{% url 'about' %}">Sobre</a></li>
+                    <li><a href="{% url 'history' %}" class="nav-link">História</a></li>
+                    <li><a href="{% url 'characters' %}" class="nav-link">Personagens</a></li>
+                    <li><a href="{% url 'chapters' %}" class="nav-link">Capítulos</a></li>
+                    <li><a href="{% url 'about' %}" class="nav-link">Sobre</a></li>
                 </ul>
             </nav>
         </div>
@@ -35,23 +35,23 @@
             style="--main-bg-image: url('{{ background_image_url }}');" 
         {% endif %}>
         
-        <section class="changelog-section">
-            <div class="version-info">
+        <section class="changelog-section" role="region" aria-labelledby="changelog-heading">
+            <div class="version-info animate-fade-in">
                 <p>Versão Atual: {{ commit_info }}</p>
             </div>
             
-            <div class="changelog-box">
-                <h2>Últimas Atualizações</h2>
-                <ul>
+            <div class="changelog-box animate-fade-in" aria-live="polite" aria-atomic="true">
+                <h2 id="changelog-heading">Últimas Atualizações</h2>
+                <ul class="changelog-list" role="list" aria-label="Lista de últimas atualizações">
                     {% if changelog %}
                         {% for commit in changelog %}
-                            <li>
+                            <li class="changelog-item" role="listitem" aria-label="{{ commit.message|truncatechars:80 }}">
                                 <span class="commit-message">{{ commit.message }}</span>
                                 <span class="commit-date">{{ commit.date|date:"d/m/Y H:i" }}</span>
                             </li>
                         {% endfor %}
                     {% else %}
-                        <li class="no-commits">Nenhum commit recente encontrado.</li>
+                        <li class="no-commits changelog-item" role="listitem">Nenhum commit recente encontrado.</li>
                     {% endif %}
                 </ul>
             </div>
