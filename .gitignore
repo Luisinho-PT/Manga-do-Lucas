@@ -1,67 +1,27 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pyc
-
-# Virtual environments
-venv/
-env/
-.venv/
-.env/
-ENV/
-Pipfile.lock
-
-# Django stuff
-*.log
-*.pot
-*.pyc
-db.sqlite3
-db.sqlite3-journal
-
-# Static and media
-/staticfiles/
-/media/
-/static/
-/build/
-/dist/
-
-# Local settings
+# Variáveis de ambiente (NUNCA commitar!)
 .env
 .env.local
 .env.*.local
-secrets.json
 
-# VS Code
-.vscode/
-
-# macOS
-.DS_Store
-
-# Pytest
-.cache/
-.pytest_cache/
-
-# MyPy
-.mypy_cache/
-
-# Coverage reports
-htmlcov/
-.coverage
-coverage.xml
-
-# System files
-Thumbs.db
-ehthumbs.db
-desktop.ini
-
-# Render build output (optional)
-build/
-.tmp/
-commit_info.txt
-
-# Node (if using npm for asset management)
+# Dependências
 node_modules/
-package-lock.json
-yarn.lock
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Referências locais usadas durante a migração do Django
+/personagem.css
+/personagem.html

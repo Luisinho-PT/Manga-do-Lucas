@@ -1,0 +1,407 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #0a0a0a;
+  --color-surface: #151515;
+  --color-card: #1e1e1e;
+  --color-gold: #ffc107;
+  --color-gold-light: #ffeb3b;
+  --color-gold-dark: #ff9800;
+  --color-muted: #a3a3a3;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-heading: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, monospace;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+  --animate-fade-down: fade-down 0.7s ease-out both;
+  --animate-shimmer: shimmer 4s linear infinite;
+  --animate-pop-in: pop-in 0.45s ease-out both;
+  --animate-spin-slow: spin 1s linear infinite;
+}
+
+@utility text-gradient-gold {
+  color: transparent;
+  background-image: linear-gradient(90deg, var(--color-gold-light), var(--color-gold), var(--color-gold-dark));
+  background-clip: text;
+}
+
+@utility panel {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: linear-gradient(145deg, rgb(30 30 30 / 0.96), rgb(18 18 18 / 0.94));
+  box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
+}
+
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% center; }
+  to { background-position: -200% center; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.65) rotate(-4deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* Campo estelar exclusivo do Luis: composição determinística, sem listeners. */
+.luis-starfield {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  contain: strict;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 40%, rgb(76 58 125 / 0.16), transparent 38%),
+    radial-gradient(circle at 12% 78%, rgb(255 193 7 / 0.09), transparent 28%);
+}
+
+.luis-starfield::before,
+.luis-starfield__dust {
+  position: absolute;
+  inset: -8%;
+  content: "";
+  background-image:
+    radial-gradient(circle, rgb(255 250 218 / 0.8) 0 0.7px, transparent 1px),
+    radial-gradient(circle, rgb(255 210 92 / 0.52) 0 1px, transparent 1.4px),
+    radial-gradient(circle, rgb(185 175 255 / 0.45) 0 0.6px, transparent 1px);
+  background-position: 0 0, 43px 61px, 17px 29px;
+  background-size: 83px 83px, 137px 137px, 59px 59px;
+}
+
+.luis-starfield::before {
+  opacity: 0.42;
+  animation: luis-cosmic-drift 45s linear infinite alternate;
+}
+
+.luis-starfield__dust {
+  opacity: 0.2;
+  filter: blur(0.35px);
+  transform: scale(1.12) rotate(7deg);
+  animation: luis-cosmic-drift 70s -24s linear infinite alternate-reverse;
+}
+
+.luis-starfield__constellations {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0.2;
+  filter: drop-shadow(0 0 5px rgb(255 215 100 / 0.25));
+  animation: luis-constellation-breathe 9s ease-in-out infinite alternate;
+}
+
+.luis-starfield__constellations path {
+  fill: none;
+  stroke: rgb(255 218 113 / 0.34);
+  stroke-width: 0.08;
+  stroke-dasharray: 0.7 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.luis-starfield__mote {
+  position: absolute;
+  top: var(--star-y);
+  left: var(--star-x);
+  width: var(--star-size);
+  height: var(--star-size);
+  color: #ffd45c;
+  opacity: 0.78;
+  animation: luis-star-voyage var(--star-duration) var(--star-delay) ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.luis-starfield__mote--ivory {
+  color: #fff8d8;
+}
+
+.luis-starfield__mote--violet {
+  color: #c9bdff;
+}
+
+.luis-starfield__mote--far {
+  z-index: 1;
+}
+
+.luis-starfield__mote--far .luis-starfield__star {
+  filter: blur(0.45px);
+}
+
+.luis-starfield__mote--middle {
+  z-index: 2;
+}
+
+.luis-starfield__mote--near {
+  z-index: 3;
+}
+
+.luis-starfield__mote--near .luis-starfield__star::before {
+  filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 16px currentColor);
+}
+
+.luis-starfield__mote--orbit {
+  animation-name: luis-star-orbit;
+}
+
+.luis-starfield__mote--rise {
+  animation-name: luis-star-rise;
+}
+
+.luis-starfield__mote--comet {
+  animation-name: luis-star-comet;
+}
+
+.luis-starfield__mote--comet .luis-starfield__rays {
+  width: 230%;
+  transform: translateX(-42%);
+  opacity: 0.38;
+}
+
+.luis-starfield__star {
+  position: absolute;
+  inset: 0;
+  display: block;
+  animation: luis-star-twinkle var(--star-duration) var(--star-delay) ease-in-out infinite;
+}
+
+.luis-starfield__star::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: radial-gradient(circle, #fff 0 5%, currentColor 24%, color-mix(in srgb, currentColor 70%, transparent) 52%, transparent 72%);
+  clip-path: polygon(50% 0, 58% 40%, 100% 50%, 58% 60%, 50% 100%, 42% 60%, 0 50%, 42% 40%);
+  filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 11px currentColor);
+}
+
+.luis-starfield__star::after {
+  position: absolute;
+  inset: 34%;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 7px 2px currentColor, 0 0 18px 5px color-mix(in srgb, currentColor 48%, transparent);
+  content: "";
+}
+
+.luis-starfield__rays,
+.luis-starfield__rays::after {
+  position: absolute;
+  top: 49%;
+  left: -20%;
+  width: 140%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, currentColor 42%, white 50%, currentColor 58%, transparent);
+  content: "";
+  opacity: 0.58;
+  filter: blur(0.2px);
+}
+
+.luis-starfield__rays::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: rotate(90deg);
+}
+
+.luis-starfield__burst {
+  position: fixed;
+  z-index: 5;
+  width: 0;
+  height: 0;
+}
+
+.luis-starfield__burst-flash {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgb(255 224 126 / 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 20px 6px rgb(255 193 7 / 0.35);
+  animation: luis-burst-flash 650ms ease-out both;
+}
+
+.luis-starfield__burst-particle {
+  position: absolute;
+  top: calc(var(--burst-size) / -2);
+  left: calc(var(--burst-size) / -2);
+  width: var(--burst-size);
+  height: var(--burst-size);
+  color: #ffd45c;
+  animation: luis-star-burst var(--burst-duration) var(--burst-delay) cubic-bezier(0.16, 0.76, 0.25, 1) both;
+  will-change: transform, opacity;
+}
+
+.luis-starfield__burst-particle .luis-starfield__star {
+  animation: luis-burst-twinkle 540ms ease-in-out infinite alternate;
+}
+
+@keyframes luis-cosmic-drift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1.03); }
+  to { transform: translate3d(2%, 1.5%, 0) scale(1.08); }
+}
+
+@keyframes luis-constellation-breathe {
+  from { opacity: 0.1; }
+  to { opacity: 0.25; }
+}
+
+@keyframes luis-star-voyage {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.32; }
+  45% { opacity: 0.9; }
+  100% { transform: translate3d(var(--star-drift-x), var(--star-drift-y), 0); opacity: 0.56; }
+}
+
+@keyframes luis-star-orbit {
+  0% { transform: translate3d(0, 0, 0) rotate(0); opacity: 0.3; }
+  35% { transform: translate3d(var(--star-drift-x), 0, 0) rotate(7deg); opacity: 0.82; }
+  70% { transform: translate3d(var(--star-drift-x), var(--star-drift-y), 0) rotate(-5deg); opacity: 0.58; }
+  100% { transform: translate3d(0, var(--star-drift-y), 0) rotate(0); opacity: 0.88; }
+}
+
+@keyframes luis-star-rise {
+  0% { transform: translate3d(0, 15vh, 0); opacity: 0; }
+  18% { opacity: 0.74; }
+  82% { opacity: 0.92; }
+  100% { transform: translate3d(var(--star-drift-x), -18vh, 0); opacity: 0; }
+}
+
+@keyframes luis-star-comet {
+  0% { transform: translate3d(-7vw, -8vh, 0) rotate(24deg) scale(0.72); opacity: 0; }
+  16% { opacity: 0.92; }
+  74% { opacity: 0.76; }
+  100% { transform: translate3d(var(--star-drift-x), var(--star-drift-y), 0) rotate(38deg) scale(1.05); opacity: 0; }
+}
+
+@keyframes luis-burst-flash {
+  from { transform: scale(0.2); opacity: 1; }
+  to { transform: scale(5); opacity: 0; }
+}
+
+@keyframes luis-star-burst {
+  0% { transform: translate3d(0, 0, 0) rotate(0) scale(0.15); opacity: 0; }
+  16% { opacity: 1; }
+  72% { opacity: 0.92; }
+  100% { transform: translate3d(var(--burst-x), var(--burst-y), 0) rotate(var(--burst-rotation)) scale(0.28); opacity: 0; }
+}
+
+@keyframes luis-burst-twinkle {
+  from { transform: scale(0.76) rotate(-8deg); }
+  to { transform: scale(1.12) rotate(10deg); }
+}
+
+@keyframes luis-star-twinkle {
+  0%, 100% { transform: rotate(-12deg) scale(0.72); opacity: 0.72; }
+  45% { transform: rotate(8deg) scale(1.08); opacity: 1; }
+  62% { transform: rotate(16deg) scale(0.88); opacity: 0.86; }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: var(--color-gold) var(--color-surface);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: #f5f5f5;
+  background: var(--color-canvas);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+img,
+video {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-gold-light);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #111;
+  background: var(--color-gold-light);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid var(--color-surface);
+  border-radius: 999px;
+  background: linear-gradient(var(--color-gold-light), var(--color-gold-dark));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .luis-starfield__mote:nth-of-type(n + 14) {
+    display: none;
+  }
+
+  .luis-starfield__constellations {
+    opacity: 0.12;
+  }
+}
+
+@media print {
+  body > * {
+    display: none !important;
+  }
+
+  body::after {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    color: #111;
+    content: "A impressão deste conteúdo foi desativada.";
+    font: 700 18px/1.5 system-ui, sans-serif;
+  }
+}

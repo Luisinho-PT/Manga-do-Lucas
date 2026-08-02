@@ -1,0 +1,10 @@
+{
+  "name": "manga-do-lucas-react",
+  "version": "0.5.0-beta.0",
+  "private": true,
+  "description": "Executor local do frontend Next.js e backend Express",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "commit": "node scripts/commit.js"
+  }
+}
