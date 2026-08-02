@@ -206,7 +206,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto] items-center gap-x-3 gap-y-3 lg:grid-cols-[1fr_auto_1fr]">
           <Link href="/" className="group flex w-fit items-center gap-3 text-white no-underline">
             <span className="relative grid size-11 rotate-3 place-items-center overflow-hidden border border-gold/50 bg-[#d8d1c5] shadow-[0_0_28px_rgba(255,193,7,0.16)] transition duration-300 group-hover:rotate-0 group-hover:scale-105 group-hover:border-gold-light">
-              <Image unoptimized src="/favicon.ico" alt="" width={44} height={44} className="size-full object-cover transition duration-500 group-hover:scale-110" />
+              <Image unoptimized src="/favicon.ico?v=2" alt="" width={44} height={44} className="size-full object-cover transition duration-500 group-hover:scale-110" />
               <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-tr from-gold/15 to-transparent opacity-0 transition group-hover:opacity-100" />
             </span>
             <span className="hidden sm:block">

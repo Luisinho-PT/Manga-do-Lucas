@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   title: 'Mangá do Luquinhas',
   description: 'O site oficial do Mangá do Luquinhas — conheça personagens, acompanhe as atualizações e deixe seu recado!',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
+    icon: '/favicon.ico?v=2',
+    shortcut: '/favicon.ico?v=2',
   },
   robots: {
     index: false,
