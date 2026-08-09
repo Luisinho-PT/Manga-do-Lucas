@@ -29,6 +29,9 @@ const contentSecurityPolicy = [
 
 const nextConfig = {
   poweredByHeader: false,
+  turbopack: {
+    root: process.cwd(),
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
