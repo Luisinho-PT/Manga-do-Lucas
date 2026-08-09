@@ -139,10 +139,14 @@ export function deletarComentarioAPI(commentId: Comment['id'], accessToken: stri
   });
 }
 
-export function fixarComentarioAPI(commentId: Comment['id'], accessToken: string): Promise<Comment> {
+export function fixarComentarioAPI(commentId: Comment['id'], fixado: boolean, accessToken: string): Promise<Comment> {
   return requestJson<Comment>(`/api/system/comments/${commentId}/pin`, {
     method: 'PATCH',
-    headers: { Authorization: `Bearer ${accessToken}` },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ fixado }),
   }).catch(() => {
     throw new Error('Erro ao fixar/desfixar comentário');
   });

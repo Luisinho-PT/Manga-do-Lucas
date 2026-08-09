@@ -59,10 +59,10 @@ export default function Reveal({ children, className = '', delay = 0, distance =
       data-reveal
       data-visible={visible}
       style={{ ...hiddenStyle, transitionDelay: `${Math.max(delay, 0)}ms` }}
-      className={`transition-[opacity,transform,filter] duration-700 ease-out will-change-[opacity,transform] ${
+      className={`transition-[opacity,transform] duration-700 ease-out ${
         visible
-          ? 'translate-y-0 opacity-100 blur-none'
-          : 'translate-y-[var(--reveal-distance)] opacity-0 blur-[2px]'
+          ? 'translate-y-0 opacity-100'
+          : 'translate-y-[var(--reveal-distance)] opacity-0 will-change-[opacity,transform]'
       } ${className}`}
     >
       {children}

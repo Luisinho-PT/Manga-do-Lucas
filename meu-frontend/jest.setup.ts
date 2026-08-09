@@ -1,18 +1,20 @@
 import '@testing-library/jest-dom';
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation((query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
 
 class IntersectionObserverMock implements IntersectionObserver {
   readonly root = null;
@@ -28,11 +30,13 @@ class IntersectionObserverMock implements IntersectionObserver {
   unobserve() {}
 }
 
-Object.defineProperty(window, 'IntersectionObserver', {
-  writable: true,
-  value: IntersectionObserverMock,
-});
-Object.defineProperty(globalThis, 'IntersectionObserver', {
-  writable: true,
-  value: IntersectionObserverMock,
-});
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'IntersectionObserver', {
+    writable: true,
+    value: IntersectionObserverMock,
+  });
+  Object.defineProperty(globalThis, 'IntersectionObserver', {
+    writable: true,
+    value: IntersectionObserverMock,
+  });
+}

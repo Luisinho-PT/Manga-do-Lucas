@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes, ImgHTMLAttributes, ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { fetchPersonagens } from '@/lib/api';
 import PersonagensPage from '../page';
 
@@ -43,12 +43,34 @@ describe('PersonagensPage', () => {
   it('exibe o botão de retorno', async () => {
     mockedFetchPersonagens.mockResolvedValue([]);
     render(<PersonagensPage />);
-    await waitFor(() => expect(screen.getByTestId('character-grid')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('empty-search')).toBeInTheDocument());
     expect(screen.getByText('Voltar para a Página Inicial')).toHaveAttribute('href', '/');
   });
 
+  it('filtra os registros pelo nome e permite limpar a busca', async () => {
+    mockedFetchPersonagens.mockResolvedValue(mockPersonagens);
+    render(<PersonagensPage />);
+    await waitFor(() => expect(screen.getByTestId('character-grid')).toBeInTheDocument());
+
+    fireEvent.change(screen.getByPlaceholderText('Buscar no arquivo...'), { target: { value: 'luc' } });
+    await waitFor(() => expect(screen.queryByText('Agug')).not.toBeInTheDocument());
+    expect(screen.getByText('Lucas')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar busca' }));
+    await waitFor(() => expect(screen.getByText('Agug')).toBeInTheDocument());
+  });
+
+  it('exibe uma orientação quando a busca não encontra registros', async () => {
+    mockedFetchPersonagens.mockResolvedValue(mockPersonagens);
+    render(<PersonagensPage />);
+    await waitFor(() => expect(screen.getByTestId('character-grid')).toBeInTheDocument());
+
+    fireEvent.change(screen.getByPlaceholderText('Buscar no arquivo...'), { target: { value: 'inexistente' } });
+    await waitFor(() => expect(screen.getByTestId('empty-search')).toHaveTextContent('Nenhum registro encontrado'));
+  });
+
   it('trata erro da API', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     mockedFetchPersonagens.mockRejectedValue(new Error('Erro de rede'));
     render(<PersonagensPage />);
     await waitFor(() => expect(screen.getByTestId('error')).toHaveTextContent('Não foi possível carregar os personagens.'));

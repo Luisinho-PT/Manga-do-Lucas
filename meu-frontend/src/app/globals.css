@@ -37,6 +37,60 @@
   }
 }
 
+.home-header {
+  transition: padding 220ms ease, background-color 220ms ease, box-shadow 220ms ease;
+}
+
+.home-header__logo,
+.home-header__edition {
+  transition: width 220ms ease, height 220ms ease, opacity 180ms ease, margin 220ms ease;
+}
+
+.home-header[data-compact="true"] {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  background-color: rgb(7 6 4 / 0.985);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.34);
+}
+
+.home-header[data-compact="true"] .home-header__logo {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.home-header[data-compact="true"] .home-header__edition {
+  height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.editorial-tilt {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --shine-x: 50%;
+  --shine-y: 50%;
+  transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 180ms ease-out;
+  will-change: transform;
+}
+
+.editorial-tilt__shine {
+  position: absolute;
+  z-index: 20;
+  inset: -1px;
+  border: 1px solid transparent;
+  background: radial-gradient(circle at var(--shine-x) var(--shine-y), rgb(255 235 170 / 0.14), transparent 28%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.editorial-tilt:hover .editorial-tilt__shine {
+  opacity: 1;
+}
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
@@ -55,6 +109,206 @@
 @keyframes pop-in {
   from { opacity: 0; transform: scale(0.65) rotate(-4deg); }
   to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@font-face {
+  font-family: "8bit Operator Plus";
+  src: url("/fonts/8bitOperatorPlus-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* HUD experimental da rota /secret. Os comandos usam a sprite sheet original como atlas. */
+.secret-pixel {
+  font-family: "8bit Operator Plus", "Courier New", ui-monospace, monospace;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: none;
+}
+
+.secret-command-sprite {
+  width: 62px;
+  height: 52px;
+  background-image: url("/img/secret/deltarune-battle-menu.png");
+  background-repeat: no-repeat;
+  background-position: var(--secret-command-x) var(--secret-command-y);
+  background-size: 3304px 3912px;
+  image-rendering: pixelated;
+}
+
+.secret-command-sprite[data-selected="true"] {
+  animation: secret-command-blink 820ms steps(2, end) infinite;
+}
+
+.secret-party-frame {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.secret-party-frame__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.secret-party-frame[data-active="true"] {
+  filter: brightness(1.08);
+}
+
+.secret-frame-luis,
+.secret-flow-luis {
+  background-image: linear-gradient(90deg, #8d6d00, #ffe600, #fff6a3, #ffe600, #8d6d00);
+  background-size: 300% 100%;
+  animation: secret-color-flow 3.4s linear infinite;
+}
+
+.secret-frame-ness,
+.secret-flow-ness {
+  background-image: linear-gradient(90deg, #6f0011, #ff3048, #ff8a96, #ff3048, #6f0011);
+  background-size: 300% 100%;
+  animation: secret-color-flow 3s linear infinite;
+}
+
+.secret-frame-machiel {
+  background: #31f7ef;
+}
+
+.secret-frame-machiel::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 155%;
+  aspect-ratio: 1;
+  background: conic-gradient(
+    from 0deg,
+    #ff334d,
+    #ff8a24,
+    #ffe600,
+    #45ff72,
+    #31f7ef,
+    #5870ff,
+    #ef3dff,
+    #ff334d
+  );
+  content: "";
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: secret-rainbow-orbit 3.2s linear infinite;
+  will-change: transform;
+}
+
+.secret-flow-machiel {
+  background-image: linear-gradient(90deg, #ff334d, #ff9b26, #ffe600, #45ff72, #31f7ef, #5870ff, #ef3dff, #ff334d);
+  background-size: 300% 100%;
+  animation: secret-color-flow 2.4s linear infinite;
+}
+
+.secret-command-button:not(:disabled):hover,
+.secret-command-button:not(:disabled):focus-visible {
+  filter: brightness(1.18) drop-shadow(0 0 5px rgb(255 230 0 / 0.42));
+}
+
+.secret-command-button:disabled {
+  opacity: 0.76;
+}
+
+@keyframes secret-command-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+@keyframes secret-color-flow {
+  from { background-position: 0% 50%; }
+  to { background-position: 300% 50%; }
+}
+
+@keyframes secret-rainbow-orbit {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.secret-teaser-signal {
+  opacity: 0.24;
+  filter: grayscale(1);
+  animation: secret-signal-drift 8s ease-in-out infinite alternate;
+}
+
+.secret-teaser-signal::before {
+  position: absolute;
+  inset: 18%;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  content: "";
+  pointer-events: none;
+  transform: rotate(45deg);
+}
+
+.secret-teaser-signal:hover,
+.secret-teaser-signal:focus-visible {
+  opacity: 0.72;
+  filter: grayscale(0.35);
+  text-shadow: 0 0 18px rgb(255 255 255 / 0.28);
+  animation-play-state: paused;
+}
+
+.secret-teaser-signal[data-selected="true"] {
+  opacity: 0.9;
+  filter: grayscale(0);
+  text-shadow: 0 0 20px rgb(255 255 255 / 0.38);
+  animation-play-state: paused;
+}
+
+.secret-teaser-progress {
+  animation: secret-progress-appear 420ms steps(4, end) both;
+}
+
+.secret-teaser-progress__fill {
+  transform-origin: left center;
+  animation: secret-progress-fill 760ms steps(8, end) both;
+}
+
+.secret-coming-soon {
+  animation: secret-coming-soon 1.2s steps(6, end) both;
+  text-shadow: 0 0 28px rgb(255 255 255 / 0.16);
+}
+
+@keyframes secret-signal-drift {
+  from { transform: translate3d(-4px, -5px, 0); }
+  to { transform: translate3d(5px, 6px, 0); }
+}
+
+@keyframes secret-progress-appear {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes secret-progress-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes secret-coming-soon {
+  0% { opacity: 0; filter: blur(8px); }
+  55% { opacity: 0.42; filter: blur(2px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+@media (max-width: 420px) {
+  .secret-command-sprite {
+    width: 49.6px;
+    height: 41.6px;
+    background-position: var(--secret-command-x-small) var(--secret-command-y-small);
+    background-size: 2643.2px 3129.6px;
+  }
+}
+
+@media (max-width: 350px) {
+  .secret-command-sprite {
+    width: 43.4px;
+    height: 36.4px;
+    background-position: var(--secret-command-x-compact) var(--secret-command-y-compact);
+    background-size: 2312.8px 2738.4px;
+  }
 }
 
 /* Campo estelar exclusivo do Luis: composição determinística, sem listeners. */

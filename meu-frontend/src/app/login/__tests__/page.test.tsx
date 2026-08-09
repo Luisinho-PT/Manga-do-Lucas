@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import LoginPage from '../page';
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  useRouter: () => ({ replace: jest.fn() }),
 }));
 
 jest.mock('@/lib/supabase', () => ({

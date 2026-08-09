@@ -106,7 +106,10 @@ describe('API', () => {
     expect(mockFetch).toHaveBeenLastCalledWith('/api/system/comments/42', expect.objectContaining({ method: 'DELETE' }));
 
     mockFetch.mockResolvedValueOnce(response({ id: 7, fixado: true }));
-    await fixarComentarioAPI(7, 'token');
-    expect(mockFetch).toHaveBeenLastCalledWith('/api/system/comments/7/pin', expect.objectContaining({ method: 'PATCH' }));
+    await fixarComentarioAPI(7, true, 'token');
+    expect(mockFetch).toHaveBeenLastCalledWith('/api/system/comments/7/pin', expect.objectContaining({
+      method: 'PATCH',
+      body: JSON.stringify({ fixado: true }),
+    }));
   });
 });

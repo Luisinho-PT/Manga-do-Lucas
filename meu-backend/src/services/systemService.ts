@@ -66,24 +66,15 @@ const SystemService = {
     return { sucesso: true };
   },
 
-  async togglePin(commentId: string): Promise<Comment> {
-    const { data: comment, error: fetchError } = await supabase
-      .from('comments')
-      .select('fixado')
-      .eq('id', commentId)
-      .single();
-
-    if (fetchError) throw new Error(fetchError.message);
-    const novoEstado = !comment.fixado;
-
-    if (novoEstado) {
+  async setPin(commentId: string, fixado: boolean): Promise<Comment> {
+    if (fixado) {
       const { error } = await supabase.from('comments').update({ fixado: false }).neq('id', commentId);
       if (error) throw new Error(error.message);
     }
 
     const { data, error } = await supabase
       .from('comments')
-      .update({ fixado: novoEstado })
+      .update({ fixado })
       .eq('id', commentId)
       .select(COMMENT_FIELDS)
       .single();

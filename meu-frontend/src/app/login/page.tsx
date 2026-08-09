@@ -49,8 +49,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push(requestedDestination());
-    router.refresh();
+    router.replace(requestedDestination());
   }
 
   return (

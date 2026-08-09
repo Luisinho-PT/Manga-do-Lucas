@@ -13,7 +13,7 @@ type SiteNavProps = {
 
 export default function SiteNav({ active }: SiteNavProps) {
   return (
-    <nav className="relative max-w-full rounded-full border border-white/10 bg-[#0b0a08]/90 p-1 shadow-[0_16px_45px_rgba(0,0,0,0.35)] backdrop-blur-2xl" aria-label="Navegação principal">
+    <nav className="relative max-w-full rounded-full border border-white/10 bg-[#0b0a08]/95 p-1 shadow-[0_16px_45px_rgba(0,0,0,0.35)] backdrop-blur-sm" aria-label="Navegação principal">
       <div aria-hidden="true" className="absolute inset-x-8 -top-px h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
       <div className="scrollbar-hidden flex max-w-full items-center gap-1 overflow-x-auto">
         {links.map((link) => {

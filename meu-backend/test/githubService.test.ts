@@ -4,6 +4,7 @@ import GithubService from '../src/services/githubService';
 
 test('exibe somente commits marcados explicitamente para o changelog', async () => {
   const originalFetch = globalThis.fetch;
+  let fetchCalls = 0;
   globalThis.fetch = async () => new Response(JSON.stringify([
     {
       sha: 'visivel',
@@ -22,11 +23,19 @@ test('exibe somente commits marcados explicitamente para o changelog', async () 
     },
   ]), { status: 200, headers: { 'Content-Type': 'application/json' } });
 
+  const countedFetch = globalThis.fetch;
+  globalThis.fetch = async (...arguments_) => {
+    fetchCalls += 1;
+    return countedFetch(...arguments_);
+  };
+
   try {
     const commits = await GithubService.getCommitsDireto();
     assert.equal(commits.length, 1);
     assert.equal(commits[0]?.commit_hash, 'visivel');
     assert.equal(commits[0]?.message, 'Nova área do mural');
+    await GithubService.getCommitsDireto();
+    assert.equal(fetchCalls, 1);
   } finally {
     globalThis.fetch = originalFetch;
   }

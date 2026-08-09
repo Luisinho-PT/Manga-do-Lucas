@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import MediaGuard from '@/components/MediaGuard';
 import './globals.css';
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body>
         <MediaGuard />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -8,6 +8,10 @@ type CommentBody = {
   mensagem?: unknown;
 };
 
+type PinCommentBody = {
+  fixado?: unknown;
+};
+
 function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Erro interno inesperado.';
 }
@@ -58,6 +62,7 @@ const criarComentario: RequestHandler<Record<string, never>, unknown, CommentBod
 };
 
 const obterVersao: RequestHandler = async (_request, response) => {
+  response.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
   try {
     const storedVersion = await SystemService.getLastVersion();
     response.json({ ...(storedVersion ?? {}), numero: '0.5 (Beta)' });
@@ -68,6 +73,7 @@ const obterVersao: RequestHandler = async (_request, response) => {
 };
 
 const listarChangelog: RequestHandler = async (_request, response) => {
+  response.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
   response.json(await GithubService.getCommitsDireto());
 };
 
@@ -108,9 +114,14 @@ const deletarComentario: RequestHandler<{ id: string }> = async (request, respon
   }
 };
 
-const fixarComentario: RequestHandler<{ id: string }> = async (request, response) => {
+const fixarComentario: RequestHandler<{ id: string }, unknown, PinCommentBody> = async (request, response) => {
+  if (typeof request.body.fixado !== 'boolean') {
+    response.status(400).json({ error: 'O estado de destaque é inválido.' });
+    return;
+  }
+
   try {
-    response.json(await SystemService.togglePin(request.params.id));
+    response.json(await SystemService.setPin(request.params.id, request.body.fixado));
   } catch (error) {
     console.error('Erro ao fixar comentário:', errorMessage(error));
     response.status(500).json({ error: 'Não foi possível alterar o destaque do comentário.' });

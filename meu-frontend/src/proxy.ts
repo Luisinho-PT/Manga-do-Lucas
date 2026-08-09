@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 const AUTOMATED_USER_AGENT = /bot|crawler|spider|scraper|slurp|bingpreview|facebookexternalhit|python-requests|python-urllib|wget|curl|go-http-client|headlesschrome|phantomjs|selenium/i;
+const MYSTERY_SEARCH = '???';
+const TEASER_INTERNAL_PATH = '/soon';
 
 export function proxy(request: NextRequest) {
   if (request.nextUrl.pathname === '/robots.txt' || request.method === 'HEAD') {
@@ -20,8 +22,13 @@ export function proxy(request: NextRequest) {
     });
   }
 
-  const response = NextResponse.next();
+  const isMysteryAddress = request.nextUrl.pathname === '/' && request.nextUrl.search === MYSTERY_SEARCH;
+  const response = isMysteryAddress
+    ? NextResponse.rewrite(new URL(TEASER_INTERNAL_PATH, request.url))
+    : NextResponse.next();
   response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, noimageindex, nosnippet');
+
+  if (isMysteryAddress) response.headers.set('Cache-Control', 'private, no-store, max-age=0');
 
   if (request.nextUrl.pathname.startsWith('/img/') || request.nextUrl.pathname.startsWith('/audio/')) {
     response.headers.set('Cache-Control', 'private, no-store, max-age=0');
